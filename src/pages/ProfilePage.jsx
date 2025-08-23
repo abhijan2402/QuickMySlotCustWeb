@@ -7,8 +7,10 @@ import {
   FaHeart,
   FaGift,
 } from "react-icons/fa";
-import { Modal, Input, Button, Upload, Form } from "antd";
+import { Modal, Input, Button, Upload, Form, Tabs, List } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+
+const { TabPane } = Tabs;
 
 export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +21,31 @@ export default function ProfilePage() {
     wallet: 1200,
     image: null,
   });
+
+  // Sample wallet history data
+  const walletHistory = [
+    {
+      id: 1,
+      type: "Credit",
+      amount: 500,
+      date: "2025-08-10",
+      desc: "Monthly cashback",
+    },
+    {
+      id: 2,
+      type: "Debit",
+      amount: 300,
+      date: "2025-08-15",
+      desc: "Payment for appointment",
+    },
+    {
+      id: 3,
+      type: "Credit",
+      amount: 200,
+      date: "2025-08-18",
+      desc: "Referral bonus",
+    },
+  ];
 
   // For image preview
   const [previewImage, setPreviewImage] = useState(null);
@@ -45,7 +72,6 @@ export default function ProfilePage() {
   // Handle upload manually to preview image (no actual upload)
   const handleUploadChange = (info) => {
     if (info.file.status === "done" || info.file.status === "uploading") {
-      // Read file as base64 for preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewImage(e.target.result);
@@ -93,42 +119,64 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* My Analytics Dashboard */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
-        <h3 className="text-lg font-bold text-gray-800 mb-6">My Analytics</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-4 rounded-xl shadow bg-gradient-to-r from-blue-50 to-blue-100">
-            <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-              <FaWallet className="text-blue-500" /> Spend This Month
-            </h4>
-            <p className="text-2xl font-bold text-gray-900 mt-2">₹2,300</p>
+      {/* Tabs for Analytics and Wallet History */}
+      <Tabs
+        defaultActiveKey="analytics"
+        type="line"
+        className="bg-white rounded-2xl p-6 shadow-md"
+      >
+        <Tabs.TabPane tab="My Analytics" key="analytics">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="p-4 rounded-xl shadow bg-gradient-to-r from-blue-50 to-blue-100">
+              <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+                <FaWallet className="text-blue-500" /> Spend This Month
+              </h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">₹2,300</p>
+            </div>
+            <div className="p-4 rounded-xl shadow bg-gradient-to-r from-green-50 to-green-100">
+              <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+                <FaGift className="text-green-500" /> Saved This Month
+              </h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">₹450</p>
+            </div>
+            <div className="p-4 rounded-xl shadow bg-gradient-to-r from-purple-50 to-purple-100">
+              <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+                <FaChartPie className="text-purple-500" /> Total Bookings
+              </h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">18</p>
+            </div>
+            <div className="p-4 rounded-xl shadow bg-gradient-to-r from-pink-50 to-pink-100">
+              <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+                <FaHeart className="text-pink-500" /> Favorite Providers
+              </h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">4</p>
+            </div>
+            <div className="p-4 rounded-xl shadow bg-gradient-to-r from-yellow-50 to-yellow-100">
+              <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+                <FaGift className="text-yellow-500" /> Cashback Earned
+              </h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">₹300</p>
+            </div>
           </div>
-          <div className="p-4 rounded-xl shadow bg-gradient-to-r from-green-50 to-green-100">
-            <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-              <FaGift className="text-green-500" /> Saved This Month
-            </h4>
-            <p className="text-2xl font-bold text-gray-900 mt-2">₹450</p>
-          </div>
-          <div className="p-4 rounded-xl shadow bg-gradient-to-r from-purple-50 to-purple-100">
-            <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-              <FaChartPie className="text-purple-500" /> Total Bookings
-            </h4>
-            <p className="text-2xl font-bold text-gray-900 mt-2">18</p>
-          </div>
-          <div className="p-4 rounded-xl shadow bg-gradient-to-r from-pink-50 to-pink-100">
-            <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-              <FaHeart className="text-pink-500" /> Favorite Providers
-            </h4>
-            <p className="text-2xl font-bold text-gray-900 mt-2">4</p>
-          </div>
-          <div className="p-4 rounded-xl shadow bg-gradient-to-r from-yellow-50 to-yellow-100">
-            <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-              <FaGift className="text-yellow-500" /> Cashback Earned
-            </h4>
-            <p className="text-2xl font-bold text-gray-900 mt-2">₹300</p>
-          </div>
-        </div>
-      </div>
+        </Tabs.TabPane>
+
+        <Tabs.TabPane tab="Wallet History" key="wallet">
+          <List
+            itemLayout="horizontal"
+            dataSource={walletHistory}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  title={`${item.type} - ₹${item.amount}`}
+                  description={`${item.desc} on ${new Date(
+                    item.date
+                  ).toLocaleDateString()}`}
+                />
+              </List.Item>
+            )}
+          />
+        </Tabs.TabPane>
+      </Tabs>
 
       {/* Edit Profile Modal */}
       <Modal
@@ -149,7 +197,7 @@ export default function ProfilePage() {
         >
           <Form.Item label="Profile Image">
             <Upload
-              beforeUpload={() => false} // Prevent upload default action
+              beforeUpload={() => false}
               onChange={handleUploadChange}
               showUploadList={false}
               accept="image/*"
