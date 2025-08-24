@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/clogo.png";
 import { FaLocationPin } from "react-icons/fa6";
 import { BiHeart } from "react-icons/bi";
+import { BsBellFill } from "react-icons/bs";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function Navbar() {
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
 
-  const navItems = ["Home","My Appointment", "About Us", "Support"];
+  const navItems = ["Home", "My Appointment", "About Us", "Support"];
   const routeToNavItem = {
     "/": "Home",
     "/appointments": "My Appointment",
@@ -85,7 +86,25 @@ export default function Navbar() {
           {/* Left Part: Wishlist, Location, User Profile */}
           {!isMinimalPage && (
             <div className="hidden md:flex items-center gap-4">
-              
+              <button
+                onClick={() => navigate("/notifications")}
+                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+              >
+                <div
+                  className="relative p-2 rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className=" text-center text-[#fff] text-xl">
+                    {" "}
+                    <BsBellFill />
+                  </span>
+                  {/* {wishlistCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"></span>
+                  )} */}
+                </div>
+              </button>
               <button
                 onClick={() => navigate("/profile")}
                 className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
@@ -177,22 +196,22 @@ export default function Navbar() {
                   </li>
                 ))}
                 <ul className="flex flex-col gap-4 justify-center items-center ">
-                  {/* <li>
+                  <li>
                     <div
                       className="relative cursor-pointer text-xl text-black"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        navigate("/wishlist");
+                        navigate("/notifications");
                       }}
                     >
-                      <span className=" text-cente text-xl">Wishlist</span>
-                      {wishlistCount > 0 && (
+                      <span className=" text-cente text-xl">Notification</span>
+                      {/* {wishlistCount > 0 && (
                         <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                           {wishlistCount}
                         </span>
-                      )}
+                      )} */}
                     </div>
-                  </li> */}
+                  </li>
 
                   <li>
                     <div

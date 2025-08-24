@@ -13,6 +13,8 @@ import Appointments from "../pages/Appointments";
 import BookServicePage from "../components/ShopServices/BookServicePage";
 import Support from "../pages/Support";
 import AboutPage from "../pages/AboutPage";
+import AppointmentDetails from "../pages/AppointmentDetails";
+import NotificationsPage from "../pages/NotificationsPage";
 
 export default function AppRoutes() {
   return (
@@ -24,6 +26,11 @@ export default function AppRoutes() {
         <Route path="/services/:type/:shopId" element={<ServiceDetailPage />} />
         <Route path="/book-service/:shopId" element={<BookServicePage />} />
         <Route path="/appointments" element={<Appointments />} />
+        <Route
+          path="/appointments/:type/:id"
+          element={<AppointmentDetails />}
+        />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/support" element={<Support />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<ProfilePage />} />

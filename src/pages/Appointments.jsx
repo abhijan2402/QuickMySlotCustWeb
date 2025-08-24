@@ -9,6 +9,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Modal, Button } from "antd";
+import { useNavigate } from "react-router-dom";
 // ₹
 const noDataVariants = {
   initial: { opacity: 0, y: -10 },
@@ -36,6 +37,10 @@ export default function Appointments() {
   const [activeTab, setActiveTab] = useState("awaiting");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const navigate = useNavigate();
+  const openDetailsPage = (appt) => {
+    navigate(`/appointments/${activeTab}/${appt.id}`);
+  };
 
   // Example appointment data with extended details
   const appointments = {
@@ -126,7 +131,7 @@ export default function Appointments() {
             <div className="flex items-center gap-3">
               <Button
                 style={{ backgroundColor: "#6961AB", color: "white" }}
-                onClick={() => openDetailsModal(appt)}
+                onClick={() => openDetailsPage(appt)}
               >
                 View Details
               </Button>
