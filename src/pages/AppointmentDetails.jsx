@@ -1,173 +1,158 @@
 import { Button, Modal } from "antd";
 import { useState } from "react";
+import {
+  PhoneOutlined,
+  EnvironmentOutlined,
+  UserOutlined,
+  CalendarOutlined,
+  DollarOutlined,
+} from "@ant-design/icons";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function AppointmentDetails() {
-  const appointmentsData = [
-    {
-      id: 101,
-      title: "Facial - 3PM",
-      provider: "Glow Beauty Salon",
-      services: "Facial, Skin care treatment",
-      price: 75,
-      address: "123 Beauty St, New York, NY",
-      mobile: "+1 234 567 890",
-      datetime: "2025-08-30T15:00:00",
-      status: "awaiting",
-    },
-    {
-      id: 102,
-      title: "Haircut - 5PM",
-      provider: "John's Salon",
-      services: "Men's haircut",
-      price: 40,
-      address: "456 Barber Ave, New York, NY",
-      mobile: "+1 555 123 4567",
-      datetime: "2025-08-24T17:00:00",
-      status: "today",
-    },
-    {
-      id: 103,
-      title: "Spa - Morning",
-      provider: "Relax Hub",
-      services: "Full body massage",
-      price: 120,
-      address: "789 Relax Rd, New York, NY",
-      mobile: "+1 444 555 6666",
-      datetime: "2025-08-25T10:00:00",
-      status: "upcoming",
-    },
-    {
-      id: 104,
-      title: "Manicure - Last Week",
-      provider: "Elegant Nails",
-      services: "Manicure, Nail Art",
-      price: 50,
-      address: "321 Style St, New York, NY",
-      mobile: "+1 666 777 8888",
-      datetime: "2025-08-15T14:00:00",
-      status: "served",
-    },
-    {
-      id: 105,
-      title: "Hair Coloring - Canceled",
-      provider: "Color Studio",
-      services: "Hair Coloring",
-      price: 90,
-      address: "654 Color Ave, New York, NY",
-      mobile: "+1 999 000 1111",
-      datetime: "2025-08-20T11:00:00",
-      status: "canceled",
-    },
-  ];
+  const navigate = useNavigate();
+  const appointment = {
+    id: 101,
+    shopName: "Glamour Touch Salon",
+    shopAddress: "123 Main Street, New Delhi",
+    shopMobile: "+91 9876543210",
+    shopImage:
+      "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600", // demo img
+    customerName: "Abhishek Sharma",
+    customerMobile: "+91 9123456780",
+    customerAddress: "B-42, Patel Nagar, New Delhi",
+    scheduleDate: "2025-06-20T14:00:00",
+    services: [
+      { name: "Haircut", price: 400 },
+      { name: "Hair Wash", price: 200 },
+    ],
+    taxes: 60,
+    discount: 50,
+    paymentMethod: "UPI (Google Pay)",
+  };
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+
+  const subtotal = appointment.services.reduce((acc, s) => acc + s.price, 0);
+  const grandTotal = subtotal + appointment.taxes - appointment.discount;
 
   const handleCancelAppointment = () => {
     setCancelModalVisible(false);
     alert("Appointment cancelled");
-    setSelectedId(null);
-  };
-
-  const handleReschedule = () => {
-    alert("Reschedule functionality coming soon");
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-8 text-center text-[#6961AB]">
-        All Appointments Details
+    <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
+      <p
+        className="text-[#6961AB] flex items-center cursor-pointer font-medium  mb-4"
+        onClick={() => navigate(-1)}
+      >
+        <FaChevronLeft className="mx-2 text-[#6961AB] shrink-0" />
+        Back
+      </p>
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#6961AB]">
+        Appointment Detail
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {appointmentsData.map((appointment) => (
-          <div
-            key={appointment.id}
-            className="relative bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col transition transform hover:-translate-y-1 hover:shadow-2xl"
-          >
-            <div className="p-6 flex-1 flex flex-col">
-              <h4 className="text-xl font-semibold text-[#6961AB] mb-2">
-                {appointment.title}
-              </h4>
-              <p className="mb-1 text-gray-700">
-                <span className="font-medium">Provider:</span>{" "}
-                {appointment.provider}
-              </p>
-              <p className="mb-1 text-gray-700">
-                <span className="font-medium">Services:</span>{" "}
-                {appointment.services}
-              </p>
-              <p className="mb-1 text-green-700 font-bold">
-                <span className="font-medium">Price:</span> ${appointment.price}
-              </p>
-              <p className="mb-1 text-gray-500">
-                <span className="font-medium">Address:</span>{" "}
-                {appointment.address}
-              </p>
-              <p className="mb-1 text-gray-500">
-                <span className="font-medium">Mobile:</span>{" "}
-                {appointment.mobile}
-              </p>
-              <p className="mb-1 text-gray-900">
-                <span className="font-medium">Date &amp; Time:</span>{" "}
-                {new Date(appointment.datetime).toLocaleString()}
-              </p>
-            </div>
-            <div className="p-6 pt-2 border-t flex gap-3">
-              <Button
-                style={{
-                  backgroundColor: "#d32f2f",
-                  color: "white",
-                  border: "none",
-                  display:"flex",
-                  justifyContent:"center",
-                  alignItems:"center"
-                }}
-                size="middle"
-                onClick={() => {
-                  setCancelModalVisible(true);
-                  setSelectedId(appointment.id);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                style={{
-                  backgroundColor: "#6961AB",
-                  color: "white",
-                  border: "none",
-                }}
-                size="middle"
-                onClick={handleReschedule}
-              >
-                Reschedule
-              </Button>
-              <span
-                className={`ml-auto px-3 py-1 rounded-full text-xs font-semibold ${
-                  appointment.status === "served"
-                    ? "bg-green-100 text-green-700"
-                    : appointment.status === "canceled"
-                    ? "bg-red-100 text-red-700"
-                    : appointment.status === "today"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-gray-100 text-gray-600"
-                } flex justify-center items-center`}
-                title={appointment.status}
-              >
-                {appointment.status.charAt(0).toUpperCase() +
-                  appointment.status.slice(1)}
-              </span>
-            </div>
-          </div>
-        ))}
+      {/* Shop Details */}
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <img
+          src={appointment.shopImage}
+          alt="shop"
+          className="w-full h-40 object-cover rounded-lg mb-3"
+        />
+        <h3 className="text-lg font-semibold text-black">
+          {appointment.shopName}
+        </h3>
+        <p className="text-gray-600 flex items-center gap-2">
+          <EnvironmentOutlined /> {appointment.shopAddress}
+        </p>
+        <p className="text-gray-600 flex items-center gap-2">
+          <PhoneOutlined /> {appointment.shopMobile}
+        </p>
+        <div className="flex justify-end">
+          <Button type="primary" className="mt-2 bg-[#6961AB]">
+            Chat
+          </Button>
+        </div>
       </div>
+
+      {/* Customer Details */}
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <h4 className="font-semibold mb-2 text-black">Customer Details</h4>
+        <p className="text-gray-700 flex items-center gap-2">
+          <UserOutlined /> {appointment.customerName}
+        </p>
+        <p className="text-gray-700 flex items-center gap-2">
+          <PhoneOutlined /> {appointment.customerMobile}
+        </p>
+        <p className="text-gray-700 flex items-center gap-2">
+          <EnvironmentOutlined /> {appointment.customerAddress}
+        </p>
+        <p className="text-gray-700 flex items-center gap-2">
+          <CalendarOutlined />{" "}
+          {new Date(appointment.scheduleDate).toLocaleString()}
+        </p>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Services */}
+        <div className="bg-white w-full rounded-xl shadow p-4 mb-4 md:mb-0">
+          <h4 className="font-semibold mb-2 text-black">Services</h4>
+          {appointment.services.map((service, idx) => (
+            <div key={idx} className="flex justify-between text-gray-700 mb-1">
+              <span>{service.name}</span>
+              <span>₹{service.price}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Price Details */}
+        <div className="bg-white w-full rounded-xl shadow p-4 mb-4 md:mb-0">
+          <h4 className="font-semibold text-black mb-2">Price Details</h4>
+          <div className="flex justify-between text-gray-700">
+            <span>Sub Total</span>
+            <span>₹{subtotal}</span>
+          </div>
+          <div className="flex justify-between text-gray-700">
+            <span>Taxes (GST)</span>
+            <span>₹{appointment.taxes}</span>
+          </div>
+          <div className="flex justify-between text-gray-700">
+            <span>Discount</span>
+            <span>-₹{appointment.discount}</span>
+          </div>
+          <div className="flex justify-between font-bold text-[#6961AB] mt-2 border-t pt-2">
+            <span>Grand Total</span>
+            <span>₹{grandTotal}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Payment Method */}
+      <div className="bg-white rounded-xl text-black shadow p-4 mb-4">
+        <h4 className="font-semibold mb-2">Payment Method</h4>
+        <p className="text-gray-700 flex items-center gap-2">
+          <DollarOutlined /> {appointment.paymentMethod}
+        </p>
+      </div>
+
+      {/* Cancel Button */}
+      <Button
+        block
+        size="large"
+        className="bg-red-500 text-white"
+        onClick={() => setCancelModalVisible(true)}
+      >
+        Cancel Appointment
+      </Button>
+
+      {/* Modal */}
       <Modal
         title="Confirm Cancellation"
         open={cancelModalVisible}
         onOk={handleCancelAppointment}
-        onCancel={() => {
-          setCancelModalVisible(false);
-          setSelectedId(null);
-        }}
+        onCancel={() => setCancelModalVisible(false)}
         okText="Yes, Cancel"
         cancelText="No"
         centered
