@@ -8,7 +8,8 @@ import {
 import Breadcrumb from "../components/Breadcrumb";
 import { useState } from "react";
 import { motion } from "framer-motion";
-
+import { Modal, Button } from "antd";
+// ₹
 const noDataVariants = {
   initial: { opacity: 0, y: -10 },
   animate: {
@@ -33,14 +34,54 @@ const tabVariants = {
 
 export default function Appointments() {
   const [activeTab, setActiveTab] = useState("awaiting");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  // Example appointment data
+  // Example appointment data with extended details
   const appointments = {
-    awaiting: [],
-    today: [{ id: 1, title: "Haircut - 5PM", provider: "John's Salon" }],
-    upcoming: [{ id: 2, title: "Spa - Tomorrow", provider: "Relax Hub" }],
+    awaiting: [
+      {
+        id: 5,
+        title: "Facial - 3PM",
+        provider: "Glow Beauty Salon",
+        services: "Facial, Skin care treatment",
+        price: 75,
+        address: "123 Beauty St, New York, NY",
+        mobile: "+1 234 567 890",
+        datetime: "2025-08-30 15:00",
+      },
+    ],
+    today: [
+      {
+        id: 1,
+        title: "Haircut - 5PM",
+        provider: "John's Salon",
+        services: "Men's haircut",
+        price: 40,
+        address: "456 Barber Ave, New York, NY",
+        mobile: "+1 555 123 4567",
+        datetime: "2025-08-24 17:00",
+      },
+    ],
+    upcoming: [
+      {
+        id: 2,
+        title: "Spa - Tomorrow",
+        provider: "Relax Hub",
+        services: "Full body massage",
+        price: 120,
+        address: "789 Relax Rd, New York, NY",
+        mobile: "+1 444 555 6666",
+        datetime: "2025-08-25 10:00",
+      },
+    ],
     served: [],
     canceled: [],
+  };
+
+  const openDetailsModal = (appt) => {
+    setSelectedAppointment(appt);
+    setModalVisible(true);
   };
 
   const renderAppointments = () => {
@@ -78,22 +119,23 @@ export default function Appointments() {
           >
             <div>
               <h4 className="font-semibold text-gray-800">{appt.title}</h4>
-              <p className="text-sm text-gray-500">{appt.provider}</p>
+              <p className="text-sm text-gray-700">Salon: {appt.provider}</p>
+              <p className="text-sm text-gray-700">Services: {appt.services}</p>
+              <p className="text-sm text-green-700">Price: ${appt.price}</p>
             </div>
-            <FaCalendarAlt className="text-blue-500 text-lg" />
+            <div className="flex items-center gap-3">
+              <Button
+                style={{ backgroundColor: "#6961AB", color: "white" }}
+                onClick={() => openDetailsModal(appt)}
+              >
+                View Details
+              </Button>
+            </div>
           </li>
         ))}
       </motion.ul>
     );
   };
-
-  const tabs = [
-    { id: "awaiting", icon: <FaClock />, label: "Awaiting" },
-    { id: "today", icon: <FaCalendarAlt />, label: "Today" },
-    { id: "upcoming", icon: <FaChartPie />, label: "Upcoming" },
-    { id: "served", icon: <FaCheckCircle />, label: "Served" },
-    { id: "canceled", icon: <FaTimesCircle />, label: "Canceled" },
-  ];
 
   return (
     <>
@@ -108,7 +150,13 @@ export default function Appointments() {
 
           {/* Tabs */}
           <div className="flex gap-4 mb-6 overflow-x-auto no-scrollbar">
-            {tabs.map(({ id, icon, label }) => (
+            {[
+              { id: "awaiting", label: "Awaiting", icon: <FaClock /> },
+              { id: "today", label: "Today", icon: <FaCalendarAlt /> },
+              { id: "upcoming", label: "Upcoming", icon: <FaChartPie /> },
+              { id: "served", label: "Served", icon: <FaCheckCircle /> },
+              { id: "canceled", label: "Canceled", icon: <FaTimesCircle /> },
+            ].map(({ id, label, icon }) => (
               <motion.button
                 key={id}
                 onClick={() => setActiveTab(id)}
@@ -130,6 +178,66 @@ export default function Appointments() {
           {renderAppointments()}
         </div>
       </div>
+
+      {/* Details Modal */}
+      <Modal
+        title={selectedAppointment?.title || "Appointment Details"}
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button
+            key="close"
+            onClick={() => setModalVisible(false)}
+            type="primary"
+          >
+            Close
+          </Button>,
+        ]}
+        bodyStyle={{ padding: "24px 32px" }}
+        centered
+        width={500}
+      >
+        {selectedAppointment && (
+          <div className="space-y-6 text-gray-800">
+            <p>
+              <span className="font-semibold text-gray-900">Provider:</span>{" "}
+              <span className="text-gray-700">
+                {selectedAppointment.provider}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Services:</span>{" "}
+              <span className="text-gray-700">
+                {selectedAppointment.services}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Price:</span>{" "}
+              <span className="text-green-600 font-medium">
+                ${selectedAppointment.price}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Address:</span>{" "}
+              <span className="text-gray-700">
+                {selectedAppointment.address}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Mobile:</span>{" "}
+              <span className="text-gray-700">
+                {selectedAppointment.mobile}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Date & Time:</span>{" "}
+              <span className="text-gray-700">
+                {selectedAppointment.datetime}
+              </span>
+            </p>
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

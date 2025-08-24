@@ -32,7 +32,7 @@ export default function Footer() {
           <div className="text-sm text-gray-400">
             📍 1234 Innovation Drive, Tech Park, Springfield, IL 62704, USA
             <br />
-            📞 +91-9782488408, +91-7976114618
+            📞 +91-xxxxxxx98, +91-xxxxxxx97
             <br />
             📧 contact@QuickmySlot.com
           </div>

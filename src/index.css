@@ -47,3 +47,7 @@
 .slick-next {
     right: -35px;
 }
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}

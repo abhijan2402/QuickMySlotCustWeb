@@ -49,7 +49,7 @@ export default function ServicesPage() {
             <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
             <div className="text-center px-6">
               <h2 className="text-4xl font-extrabold text-purple-700">
-                Our Services
+                {type ? type.charAt(0).toUpperCase() + type.slice(1) : ""}
               </h2>
               <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
                 Browse through the various professional services we provide

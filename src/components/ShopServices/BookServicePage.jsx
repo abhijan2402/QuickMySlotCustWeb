@@ -13,6 +13,7 @@ import {
   Empty,
 } from "antd";
 import { div } from "framer-motion/client";
+import { BsTrash2 } from "react-icons/bs";
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -94,6 +95,9 @@ export default function BookServicePage() {
     setAppliedOffer(null);
   };
 
+   const removeItem = (indexToRemove) => {
+     setCart((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+   };
   return (
     <div className="max-w-7xl mx-auto p-6">
       <button onClick={() => navigate(-1)} className="mb-4 text-purple-700">
@@ -106,7 +110,7 @@ export default function BookServicePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* LEFT CONTENT */}
-        <div className="col-span-2 bg-white rounded-2xl shadow p-6 min-h-[600px] flex flex-col">
+        <div className="col-span-2 bg-white rounded-2xl shadow p-6 min-h-[500px] flex flex-col">
           <h1 className="text-xl font-bold mb-5 text-purple-700">
             {shop.name}
           </h1>
@@ -174,26 +178,35 @@ export default function BookServicePage() {
         </div>
 
         {/* RIGHT CART (Sticky Sidebar) */}
-        <div className="bg-white rounded-2xl shadow p-6 sticky top-6 min-h-[600px] flex flex-col">
+        <div className="bg-white rounded-2xl shadow p-6 sticky top-6 min-h-[500px] flex flex-col">
           <h2 className="text-lg font-semibold mb-4 text-purple-700">
             Selected Services
           </h2>
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 h-[250px]">
             {cart.length === 0 ? (
               <div className="h-full flex justify-center items-center">
                 <Empty description="No services selected" />
               </div>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-3 overflow-y-auto scrollbar-none h-[350px]">
                 {cart.map((item, i) => (
                   <li
                     key={i}
                     className="flex justify-between items-center border-b pb-2"
                   >
                     <span className="text-gray-700">{item.desc}</span>
-                    <span className="text-purple-700 font-semibold">
-                      ₹{item.price}
-                    </span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-purple-700 font-semibold">
+                        ₹{item.price}
+                      </span>
+                      <Button
+                        type="text"
+                        icon={<BsTrash2 size={18} />}
+                        onClick={() => removeItem(i)}
+                        aria-label={`Remove ${item.desc}`}
+                        className="text-red-600 hover:text-red-800"
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>

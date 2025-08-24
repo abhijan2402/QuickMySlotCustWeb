@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #022B57;
+    background-color: #6961AB;
     color: #fff;
     font-size: 30px;
     cursor: pointer;
@@ -59,7 +59,7 @@
     }
 
     to {
-        border-top-color: #022B57;
+        border-top-color: #6961AB;
         border-top-width: 100%;
     }
 }

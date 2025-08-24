@@ -12,6 +12,7 @@ import ProfilePage from "../pages/ProfilePage";
 import Appointments from "../pages/Appointments";
 import BookServicePage from "../components/ShopServices/BookServicePage";
 import Support from "../pages/Support";
+import AboutPage from "../pages/AboutPage";
 
 export default function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ export default function AppRoutes() {
         <Route path="/book-service/:shopId" element={<BookServicePage />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/support" element={<Support />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
