@@ -14,11 +14,12 @@ export default function Navbar() {
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
 
-  const navItems = ["Home", "My Appointment", "About Us", "Support"];
+  const navItems = ["Home", "My Appointment","Pricing", "About Us", "Support"];
   const routeToNavItem = {
     "/": "Home",
     "/appointments": "My Appointment",
     "/about": "About Us",
+    "/pricing": "Pricing",
     "/support": "Support",
   };
   const [active, setActive] = useState(routeToNavItem[location.pathname] || "");
