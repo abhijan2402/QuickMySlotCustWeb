@@ -141,7 +141,7 @@ export default function Navbar() {
                 <div className="flex flex-col">
                   <div className="flex gap-1 items-center">
                     <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
-                      <FaLocationPin className="w-4 h-4" />
+                      <FaMapMarkerAlt className="w-4 h-4" />
                     </div>
                     <span className="font-semibold text-[#6961ab] text-[14px]">
                       {"Jaipur"}

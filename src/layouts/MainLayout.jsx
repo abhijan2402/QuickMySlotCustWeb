@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ScrollTracker from "../components/ScrollTracker/ScrollTracker";
 import { Outlet } from "react-router-dom";
+import FloatingOfferButton from "../components/FloatingOfferButton";
 
 export default function MainLayout() {
   return (
@@ -11,6 +12,7 @@ export default function MainLayout() {
       {/* Add padding top equal to navbar height */}
       <main className="pt-[85px]">
         <Outlet />
+        <FloatingOfferButton/>
       </main>
       <Footer />
       <ScrollTracker />

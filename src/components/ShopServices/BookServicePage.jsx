@@ -28,6 +28,8 @@ export default function BookServicePage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [appliedOffer, setAppliedOffer] = useState(null);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   if (!shop) {
     return (
@@ -69,7 +71,7 @@ export default function BookServicePage() {
     }
 
     const subtotal = cart.reduce((sum, s) => sum + Number(s.price), 0);
-    const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0; // 10% off if offer applied
+    const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
     const platformFee = 50;
     const total = subtotal - discount + platformFee;
 
@@ -83,21 +85,17 @@ export default function BookServicePage() {
       discount,
       platformFee,
       total,
+      appointmentId: Math.floor(Math.random() * 1000000), // sample id
     };
 
-    console.log("BOOKING CONFIRMED:", bookingData);
-    message.success("Booking Confirmed!");
-
+    setConfirmedBooking(bookingData);
     setModalOpen(false);
-    setCart([]);
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setAppliedOffer(null);
+    setConfirmationOpen(true);
   };
 
-   const removeItem = (indexToRemove) => {
-     setCart((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-   };
+  const removeItem = (indexToRemove) => {
+    setCart((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
   return (
     <div className="max-w-7xl mx-auto p-6">
       <button onClick={() => navigate(-1)} className="mb-4 text-purple-700">
@@ -339,6 +337,85 @@ export default function BookServicePage() {
             </div>
           );
         })()}
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <Modal
+        open={confirmationOpen}
+        onCancel={() => setConfirmationOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setConfirmationOpen(false)}>
+            Cancel Booking
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            style={{ backgroundColor: "#6961AB", borderColor: "#6961AB" }}
+            onClick={() => {
+              setConfirmationOpen(false);
+              // redirect to payment gateway page (replace '/payment-gateway' with your route)
+              navigate("/payment-gateway", { state: confirmedBooking });
+            }}
+          >
+            Confirm & Pay
+          </Button>,
+        ]}
+        title="Booking Confirmation"
+        centered
+        width={500}
+      >
+        {/* Salon Closed Banner */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 p-2 rounded bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+            <span>🕒</span>
+            <span>
+              The salon is currently closed. They will confirm your appointment
+              as soon as they open.
+            </span>
+          </div>
+        </div>
+
+        {/* What To Do Next */}
+        <div className="mb-4">
+          <h3 className="font-bold mb-1">What To Do Next</h3>
+          <ul className="list-disc pl-6 text-gray-700">
+            <li>Visit the location after receiving a confirmation</li>
+            <li>
+              Pay your bill on QuickSlot with any online payment to avail the
+              offer
+            </li>
+          </ul>
+        </div>
+
+        {/* Things To Remember */}
+        <div className="mb-4">
+          <h3 className="font-bold mb-1">Things To Remember</h3>
+          <ul className="list-disc pl-6 text-gray-700">
+            <li>You can change or add new services at the location</li>
+            <li>Cash payments are not accepted</li>
+          </ul>
+        </div>
+
+        {/* Salon Details */}
+        <div className="mb-4">
+          <h3 className="font-bold mb-1">Salon Details</h3>
+          <p className="font-semibold">
+            {shop.name}, {shop.address}
+          </p>
+          {/* Add support info, timings, directions, buttons as needed */}
+        </div>
+
+        {/* Appointment Details */}
+        <div className="mb-4">
+          <h3 className="font-bold mb-1">Appointment Details</h3>
+          <p>
+            <b>Appointment Id:</b> {confirmedBooking?.appointmentId}
+            <br />
+            <b>Date:</b> {confirmedBooking?.date}
+            <br />
+            <b>Time:</b> {confirmedBooking?.time}
+          </p>
+        </div>
       </Modal>
     </div>
   );

@@ -45,7 +45,7 @@ export default function AppointmentDetails() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
       <p
-        className="text-[#6961AB] flex items-center cursor-pointer font-medium  mb-4"
+        className="text-[#6961AB] flex items-center cursor-pointer font-medium underline mb-4"
         onClick={() => navigate(-1)}
       >
         <FaChevronLeft className="mx-2 text-[#6961AB] shrink-0" />
