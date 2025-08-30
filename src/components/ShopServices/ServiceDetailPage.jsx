@@ -116,14 +116,12 @@ export default function ServiceDetailPage() {
                 {shop.services.map((service, i) => (
                   <div
                     key={i}
+                    onClick={() => navigate(`/book-service/${shop.id}`)}
                     className="cursor-pointer bg-gray-100 rounded-lg p-4 shadow hover:shadow-lg transition w-40 text-center"
                   >
                     <p className="font-semibold text-purple-700">
                       {service.service_name}
                     </p>
-                    {/* <p className="text-sm text-gray-600 mt-1">
-                    Click to learn more
-                  </p> */}
                   </div>
                 ))}
               </div>
@@ -135,6 +133,25 @@ export default function ServiceDetailPage() {
                 About This Shop
               </h2>
               <p className="text-gray-700">{shop.about}</p>
+            </div>
+
+            {/* Amenities */}
+            <div>
+              <h2 className="text-2xl font-semibold mb-4 text-black">
+                Amenities
+              </h2>
+              <div className="flex flex-wrap gap-4">
+                {shop.amenities.map((amenity, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-200 rounded-xl px-8 py-2 shadow text-center"
+                  >
+                    <p className="font-semibold text-gray-700 text-sm">
+                      {amenity}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Gallery */}

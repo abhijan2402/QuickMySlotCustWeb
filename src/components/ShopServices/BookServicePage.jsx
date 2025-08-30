@@ -11,12 +11,14 @@ import {
   List,
   Badge,
   Empty,
+  Input,
 } from "antd";
 import { div } from "framer-motion/client";
 import { BsTrash2 } from "react-icons/bs";
 
 const { Panel } = Collapse;
 const { Option } = Select;
+const { TextArea } = Input;
 
 export default function BookServicePage() {
   const { shopId } = useParams();
@@ -28,6 +30,7 @@ export default function BookServicePage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [appliedOffer, setAppliedOffer] = useState(null);
+  const [note, setNote] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
@@ -81,6 +84,7 @@ export default function BookServicePage() {
       date: selectedDate,
       time: selectedTime,
       appliedOffer: appliedOffer || "None",
+      note: note,
       subtotal,
       discount,
       platformFee,
@@ -305,6 +309,18 @@ export default function BookServicePage() {
             <Option value={shop.offer}>{shop.offer}</Option>
           )}
         </Select>
+
+        {/* Note */}
+        <h3 className="font-semibold mb-2">Request/Note</h3>
+        <div className="mb-2">
+          <TextArea
+            rows={4}
+            placeholder="Enter your request or note here..."
+            allowClear
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
 
         {/* Bill Summary */}
         <h3 className="font-semibold mb-2">Bill Summary</h3>

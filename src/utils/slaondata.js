@@ -50,6 +50,7 @@ export const salondata = [
         ],
       },
     ],
+    amenities: ["WiFi", "Parking", "Restrooms"],
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV8bpRsNAY1wRBigHvMxF1CEhGXpc5tNTz4g&s",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV8bpRsNAY1wRBigHvMxF1CEhGXpc5tNTz4g&s",

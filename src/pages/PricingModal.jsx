@@ -110,7 +110,7 @@ const PricingModal = () => {
     <div className="max-w-6xl mx-auto p-6 text-center">
       {/* Heading Section */}
       <div className="mt-8">
-        <Title level={2}>Choose the Right Plan for You</Title>
+        <Title level={2}>Subscribe the Right Plan for You</Title>
         <Paragraph type="secondary" className="mb-8 text-gray-600">
           Whether you’re just starting out or running a large organization, we
           have a plan that fits your needs. Switch between{" "}
