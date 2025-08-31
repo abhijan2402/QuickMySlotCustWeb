@@ -12,7 +12,7 @@ export default function MainLayout() {
       {/* Add padding top equal to navbar height */}
       <main className="pt-[85px]">
         <Outlet />
-        <FloatingOfferButton/>
+        {/* <FloatingOfferButton/> */}
       </main>
       <Footer />
       <ScrollTracker />

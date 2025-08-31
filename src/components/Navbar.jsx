@@ -18,13 +18,13 @@ export default function Navbar() {
     "Home",
     "My Appointment",
     "Subscription",
-    "About Us",
+    "Offers",
     "Support",
   ];
   const routeToNavItem = {
     "/": "Home",
     "/appointments": "My Appointment",
-    "/about": "About Us",
+    "/offers": "Offers",
     "/pricing": "Subscription",
     "/support": "Support",
   };

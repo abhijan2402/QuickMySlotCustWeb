@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircleOutlined } from "@ant-design/icons";
+import Breadcrumb from "../components/Breadcrumb";
 
 const offers = [
   {
@@ -42,17 +43,19 @@ const OffersList = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto py-6 px-2">
-        <h1 className="text-3xl md:text-4xl mb-4 font-extrabold text-gray-900 leading-tight">
+        <Breadcrumb propertyTitle={"Offers"}/>
+        <h1 className="text-3xl md:text-4xl mb-5 mt-6 px-5 font-extrabold text-gray-900 leading-tight">
           Offers <span className="text-[#6961AB]">Avaliable</span>
         </h1>
         <motion.div
-          className="space-y-4"
+          className="space-y-4 px-5"
           initial="hidden"
           animate="visible"
           variants={{
             hidden: { opacity: 0, y: 40 },
             visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
           }}
+          
         >
           {offers.map((offer) => (
             <motion.div
