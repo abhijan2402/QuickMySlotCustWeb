@@ -17,12 +17,24 @@ import AppointmentDetails from "../pages/AppointmentDetails";
 import NotificationsPage from "../pages/NotificationsPage";
 import OffersList from "../pages/OffersList";
 import PricingModal from "../pages/PricingModal";
+import ProtectedRoute from "./ProtectedRoute";
+import Signup from "../pages/Auth/SignUp";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 export default function AppRoutes() {
   return (
     <Routes>
+      {/* Public Routes */}
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       {/* ✅ Routes WITH Layout */}
-      <Route element={<MainLayout />}>
+      <Route
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/" element={<Home />} />
         <Route path="/services/:type" element={<ServicesPage />} />
         <Route path="/services/:type/:shopId" element={<ServiceDetailPage />} />

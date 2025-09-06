@@ -12,24 +12,33 @@ import { UploadOutlined } from "@ant-design/icons";
 import { InviteModal } from "../components/Modals/InviteModal";
 import { ChangePasswordModal } from "../components/Modals/ChangePasswordModal";
 import { DeleteAccountModal } from "../components/Modals/DeleteAccountModal";
+import { useGetProfileQuery } from "../services/profileApi";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../slices/authSlice";
 
 const { Panel } = Collapse;
 
 const { TabPane } = Tabs;
 
 export default function ProfilePage() {
+  const dispatch = useDispatch();
+  const { data: profile } = useGetProfileQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [changePassOpen, setChangePassOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    phone: "+91 9876543210",
-    wallet: 1200,
-    image: null,
-  });
+  // const [profile, setProfile] = useState({
+  //   name: "John Doe",
+  //   email: "johndoe@gmail.com",
+  //   phone: "+91 9876543210",
+  //   wallet: 1200,
+  //   image: null,
+  // });
+
+  const handleLogoOut = () => {
+    dispatch(logout());
+  };
 
   // Sample wallet history data
   const walletHistory = [
@@ -103,13 +112,6 @@ export default function ProfilePage() {
   };
 
   const onFinish = (values) => {
-    setProfile((prev) => ({
-      ...prev,
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-      image: previewImage || prev.image,
-    }));
     setIsModalOpen(false);
   };
 
@@ -130,9 +132,9 @@ export default function ProfilePage() {
         {/* Profile Card */}
         <div className="bg-white p-6 rounded-2xl shadow-md flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {profile.image ? (
+            {profile?.data?.image ? (
               <img
-                src={profile.image}
+                src={profile?.data?.image}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover"
               />
@@ -141,21 +143,21 @@ export default function ProfilePage() {
             )}
             <div>
               <h2 className="text-xl font-bold text-gray-800">
-                {profile.name}
+                {profile?.data?.name}
               </h2>
-              <p className="text-gray-500">{profile.email}</p>
-              <p className="text-sm text-gray-400">{profile.phone}</p>
+              <p className="text-gray-500">{profile?.data?.email}</p>
+              <p className="text-sm text-gray-400">
+                {profile?.data?.phone_number}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <FaWallet className="text-green-500 text-xl" />
-              <span className="font-semibold text-gray-800">
-                ₹{profile.wallet}
-              </span>
+              <span className="font-semibold text-gray-800">₹{1000}</span>
               <Button
                 style={{ backgroundColor: "#FFE4E1" }}
-                // onClick={() => setDeleteOpen(true)}
+                onClick={handleLogoOut}
                 danger
               >
                 Logout
@@ -274,9 +276,9 @@ export default function ProfilePage() {
           <Form
             layout="vertical"
             initialValues={{
-              name: profile.name,
-              email: profile.email,
-              phone: profile.phone,
+              name: profile?.data?.name,
+              email: profile?.data?.email,
+              phone: profile?.data?.phone,
             }}
             onFinish={onFinish}
           >
