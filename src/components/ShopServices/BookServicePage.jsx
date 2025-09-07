@@ -20,6 +20,23 @@ const { Panel } = Collapse;
 const { Option } = Select;
 const { TextArea } = Input;
 
+const slotOptions = {
+  fast: [
+    { time: "02:00 - 02:15 pm", fillingSoon: true },
+    { time: "02:30 - 02:45 pm", fillingSoon: true },
+  ],
+  scheduled: [
+    { time: "04:30 - 04:45 pm" },
+    { time: "05:00 - 05:15 pm" },
+    { time: "05:30 - 05:45 pm" },
+    { time: "06:00 - 06:15 pm", fee: 50 },
+    { time: "06:30 - 06:45 pm", fee: 50 },
+    { time: "07:00 - 07:15 pm", fee: 100 },
+    { time: "07:30 - 07:45 pm", fee: 100 },
+    { time: "08:00 - 08:15 pm", fee: 100 },
+  ],
+};
+
 export default function BookServicePage() {
   const { shopId } = useParams();
   const navigate = useNavigate();
@@ -33,6 +50,8 @@ export default function BookServicePage() {
   const [note, setNote] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState({ time: "", fee: 0 });
+  console.log(selectedSlot.fee);
 
   if (!shop) {
     return (
@@ -64,6 +83,11 @@ export default function BookServicePage() {
   const total = cart.reduce((sum, s) => sum + Number(s.price), 0);
 
   const handleConfirm = () => {
+    if (!selectedDate || !selectedSlot) {
+      message.error("Please select date and slot");
+      return;
+    }
+
     if (!cart.length) {
       message.error("Please select at least one service");
       return;
@@ -76,22 +100,23 @@ export default function BookServicePage() {
     const subtotal = cart.reduce((sum, s) => sum + Number(s.price), 0);
     const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
     const platformFee = 50;
-    const total = subtotal - discount + platformFee;
+    const total = subtotal - discount + platformFee + selectedSlot.fee;
 
     const bookingData = {
       shop: shop.name,
       services: cart,
       date: selectedDate,
       time: selectedTime,
+      slot: selectedSlot.time,
       appliedOffer: appliedOffer || "None",
       note: note,
       subtotal,
       discount,
       platformFee,
-      total,
+      total: total,
       appointmentId: Math.floor(Math.random() * 1000000), // sample id
     };
-
+    console.log(bookingData);
     setConfirmedBooking(bookingData);
     setModalOpen(false);
     setConfirmationOpen(true);
@@ -290,6 +315,86 @@ export default function BookServicePage() {
           </Select>
         </div>
 
+        {/* Date & Slot Selection */}
+        <h3 className="font-semibold mb-2">Choose Date & Slot</h3>
+        <DatePicker
+          onChange={(_, dateString) => setSelectedDate(dateString)}
+          placeholder="Select Date"
+          style={{ width: "170px" }}
+        />
+        <div className="flex mt-4 flex-col sm:flex-row gap-4 mb-4">
+          <div className="flex-1 min-w-[170px]">
+            {/* Fast Booking */}
+            <div>
+              <div className="flex items-center gap-2 font-semibold mb-1">
+                <span>⚡ Fast Booking</span>
+                <span className="text-orange-500 text-xs font-semibold">
+                  🔥 filling soon
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {slotOptions.fast.map((slot, idx) => (
+                  <button
+                    key={slot.time}
+                    className={`rounded flex items-center px-3 py-2 border text-xs
+              ${
+                selectedSlot === slot.time
+                  ? "border-purple-600 bg-purple-50"
+                  : "border-gray-300 bg-white"
+              }
+            `}
+                    onClick={() => setSelectedSlot(slot)}
+                  >
+                    <span>{slot.time}</span>
+                    {slot.fillingSoon && (
+                      <span className="ml-2 text-orange-500 font-semibold">
+                        🔥
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Scheduled Slots */}
+            <div>
+              <div className="flex items-center gap-2 font-semibold mt-4 mb-1">
+                <span>⏰ Scheduled Slots</span>
+                <span className="text-orange-500 text-xs font-semibold">
+                  🔥 filling soon
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {slotOptions.scheduled.map((slot, idx) => (
+                  <button
+                    key={slot.time}
+                    className={`rounded flex items-center px-3 py-2 border text-xs
+              ${
+                selectedSlot.time === slot.time
+                  ? "border-purple-600 bg-purple-50"
+                  : "border-gray-300 bg-white"
+              }
+            `}
+                    onClick={() => setSelectedSlot(slot)}
+                  >
+                    <span>{slot.time}</span>
+                    {slot.fee && (
+                      <span className="ml-2 text-orange-600 font-semibold">
+                        + ₹{slot.fee}
+                      </span>
+                    )}
+                    {slot.fillingSoon && (
+                      <span className="ml-2 text-orange-500 font-semibold">
+                        🔥
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Offers */}
         <h3 className="font-semibold mb-2">Available Offers</h3>
         <Select
@@ -328,7 +433,8 @@ export default function BookServicePage() {
           const subtotal = cart.reduce((sum, s) => sum + Number(s.price), 0);
           const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0; // Example 10% discount
           const platformFee = 50; // Fixed platform fee
-          const grandTotal = subtotal - discount + platformFee;
+          const slot = 0 || selectedSlot.fee;
+          const grandTotal = subtotal - discount + platformFee + slot;
 
           return (
             <div className="space-y-2 text-base">

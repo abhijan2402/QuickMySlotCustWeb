@@ -43,7 +43,7 @@ const OffersList = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto py-6 px-2">
-        <Breadcrumb propertyTitle={"Offers"}/>
+        <Breadcrumb propertyTitle={"Offers"} />
         <h1 className="text-3xl md:text-4xl mb-5 mt-6 px-5 font-extrabold text-gray-900 leading-tight">
           Offers <span className="text-[#6961AB]">Avaliable</span>
         </h1>
@@ -55,8 +55,36 @@ const OffersList = () => {
             hidden: { opacity: 0, y: 40 },
             visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
           }}
-          
         >
+          <div className="max-w-6xl mx-auto mt-5 mb-6">
+            <div className="bg-gradient-to-r from-[#e1ecfe] to-[#c5fcfa] rounded-xl shadow flex flex-col md:flex-row md:justify-around py-6 px-4 md:px-8">
+              <div className="flex-1 flex flex-col items-center mb-6 md:mb-0">
+                <span className="text-white bg-purple-600 px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                  STEP 1
+                </span>
+                <span className="text-gray-800 font-semibold text-center">
+                  Book your appointment via the QuickmySlot
+                </span>
+              </div>
+              <div className="flex-1 flex flex-col items-center mb-6 md:mb-0">
+                <span className="text-white bg-purple-700 px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                  STEP 2
+                </span>
+                <span className="text-gray-800 font-semibold text-center">
+                  Go and avail the services
+                </span>
+              </div>
+              <div className="flex-1 flex flex-col items-center">
+                <span className="text-white bg-[#5F579A] px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                  STEP 3
+                </span>
+                <span className="text-gray-800 font-semibold text-center">
+                  Pay bill with QuickmySlot to avail the offer
+                </span>
+              </div>
+            </div>
+          </div>
+
           {offers.map((offer) => (
             <motion.div
               key={offer.code}
