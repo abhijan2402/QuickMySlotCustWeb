@@ -231,7 +231,7 @@ export default function Signup() {
         </div>
 
         {/* Right side - Branding */}
-        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#3f2c7f] items-center justify-center text-center p-10">
+        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
               src="/Selection.png"
