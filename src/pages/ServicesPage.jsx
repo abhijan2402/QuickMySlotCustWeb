@@ -6,9 +6,24 @@ import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { salondata } from "../utils/slaondata";
+import { useGetvendorQuery } from "../services/vendorApi";
+import { useGetcategoryQuery } from "../services/categoryApi";
+import CardCarouselLoader from "../components/CardCarouselLoader";
+import NoDataAvailable from "./NoDataAvailable";
+import { useVendors } from "../hooks/useVendor";
 
 export default function ServicesPage() {
- 
+  const { id } = useParams();
+  // const {
+  //   vendors,
+  //   isLoading: loadingVendors,
+  //   error: vendorsError,
+  // } = useVendors(id);
+  const { data, isLoading } = useGetvendorQuery(id);
+  const { data: category } = useGetcategoryQuery();
+  const categoryData = category?.data?.find((cat) => cat.id === Number(id));
+
+  // console.log(data?.data);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -16,8 +31,8 @@ export default function ServicesPage() {
   // State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
-  const { type } = useParams();
-    const navigate = useNavigate();
+
+  const navigate = useNavigate();
 
   // Filtered Shops
   const filteredShops = salondata.filter((s) => {
@@ -46,47 +61,47 @@ export default function ServicesPage() {
         {/* Heading & Subheading */}
         <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
             <div className="text-center px-6">
-              <h2 className="text-4xl font-extrabold text-purple-700">
-                {type ? type.charAt(0).toUpperCase() + type.slice(1) : ""}
+              <h2 className="text-4xl font-extrabold text-[#EE4E34]">
+                {categoryData ? categoryData?.name : ""}
               </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
+              <p className="mt-2 text-gray-700 text-sm sm:text-base max-w-md mx-auto">
                 Browse through the various professional services we provide
                 across different locations.
               </p>
             </div>
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           </div>
         </div>
 
         {/* Filter Section */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col lg:flex-row justify-between items-center gap-6">
           {/* Title */}
-          <h4 className="text-2xl font-bold text-center text-gray-800">
-            Explore & Book{" "}
-            {type ? type.charAt(0).toUpperCase() + type.slice(1) : ""} Around
-            You
+          <h4 className="text-xl sm:text-2xl font-bold text-center text-gray-800">
+            Explore & Book {categoryData ? categoryData?.name : ""} Around You
           </h4>
 
           {/* Search + Dropdown Container */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
             {/* Search Bar */}
             <input
               type="text"
               placeholder="Search by name or address..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:w-72 border rounded-lg px-4 py-2 shadow-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+              className="w-full sm:w-72 border rounded-lg px-4 py-2 shadow-sm text-gray-800 
+                 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             />
 
             {/* Location Dropdown */}
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full sm:w-56 border rounded-lg px-4 py-2 shadow-sm bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-400 cursor-pointer transition"
+              className="w-full sm:w-56 border rounded-lg px-4 py-2 shadow-sm bg-white text-gray-800 font-medium 
+                 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-400 cursor-pointer transition"
             >
-              <option value="All"> All Locations</option>
+              <option value="All">All Locations</option>
               {locations.map((loc) => (
                 <option key={loc} value={loc}>
                   {loc}
@@ -97,47 +112,66 @@ export default function ServicesPage() {
         </div>
 
         {/* Shops Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredShops.map((shop) => (
-            <div
-              key={shop.id}
-              onClick={() => navigate(`/services/${type || "all"}/${shop.id}`)}
-              className="border rounded-lg shadow-lg overflow-hidden bg-white cursor-pointer"
-            >
-              {/* Image Carousel */}
-              <div className="relative">
-                <Slider {...sliderSettings}>
-                  {shop.images.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={shop.name}
-                      className="w-full h-56 object-cover"
-                    />
-                  ))}
-                </Slider>
-                {shop.offer.length > 0 && (
-                  <span className="absolute w-full text-center top-0 left-0 bg-green-500 text-white text-sm font-semibold px-3 py-1  shadow">
-                    {shop.offer[0]}
-                  </span>
-                )}
-              </div>
+        {isLoading ? (
+          <CardCarouselLoader count={6} />
+        ) : data?.data?.length <= 0 ? (
+          <NoDataAvailable />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data?.data?.map((shop) => (
+              <div
+                key={shop.id}
+                onClick={() =>
+                  navigate(
+                    `/services/${categoryData?.name || "all"}/${shop.id}`
+                  )
+                }
+                className="border rounded-lg shadow-lg overflow-hidden bg-white cursor-pointer hover:shadow-xl transition"
+              >
+                {/* Image Carousel */}
+                <div className="relative">
+                  {shop?.portfolio_images?.length > 0 ? (
+                    <Slider {...sliderSettings}>
+                      {shop.portfolio_images.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img}
+                          alt={shop.name}
+                          className="w-full h-56 object-cover"
+                        />
+                      ))}
+                    </Slider>
+                  ) : (
+                    <div className="w-full h-56 flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
+                      Image not available
+                    </div>
+                  )}
+                </div>
 
-              {/* Shop Info */}
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-purple-700">
-                  {shop.name}
-                </h3>
-                <p className="text-gray-600 text-sm">{shop.address}</p>
+                {/* Shop Info */}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-[#EE4E34]">
+                    {shop.business_name || "NA"}
+                  </h3>
+                  {/* <p className="text-gray-600 text-sm">{shop.address}</p> */}
 
-                <p className="text-gray-500 text-sm mt-1">
-                  Experience: {shop.experience}
-                </p>
-                <p className="text-gray-500 text-sm">Available: {shop.time}</p>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Experience: {shop.years_of_experience}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Available: {shop.daily_end_time} - {shop.daily_start_time} |{" "}
+                    {shop.working_days[0]} -{" "}
+                    {shop.working_days[shop.working_days.length - 1]}
+                  </p>
+
+                  <p className="text-gray-500 text-sm">
+                    Address: {shop.location_area_served}, {shop.exact_location}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </>
   );

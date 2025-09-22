@@ -4,7 +4,6 @@ import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import { HiArrowNarrowLeft } from "react-icons/hi";
 import Slider from "react-slick";
 
-
 const bookings = [
   {
     shopName: "Elite Salon",
@@ -28,85 +27,84 @@ const bookings = [
 ];
 
 const MyBookings = () => {
-    function NextArrow(props) {
-      const { onClick } = props;
-      return (
-        <div
-          className="slick-arrow slick-next"
-          style={{
-            display: "block",
-            right: "-35px",
-            fontSize: "30px",
-            color: "#722ed1",
-            cursor: "pointer",
-          }}
-          onClick={onClick}
-        >
-          <FaArrowAltCircleRight />
-        </div>
-      );
-    }
+  function NextArrow(props) {
+    const { onClick } = props;
+    return (
+      <div
+        className="slick-arrow slick-next"
+        style={{
+          display: "block",
+          right: "-35px",
+          fontSize: "30px",
+          color: "#EE4E34",
+          cursor: "pointer",
+        }}
+        onClick={onClick}
+      >
+        <FaArrowAltCircleRight />
+      </div>
+    );
+  }
 
-    function PrevArrow(props) {
-      const { onClick } = props;
-      return (
-        <div
-          className="slick-arrow slick-prev"
-          style={{
-            display: "block",
-            left: "-35px",
-            fontSize: "30px",
-            color: "#722ed1",
-            cursor: "pointer",
-          }}
-          onClick={onClick}
-        >
-          <FaArrowAltCircleLeft />
-        </div>
-      );
-    }
-const settings = {
-  dots: false,
-  infinite: bookings.length > 1,
-  speed: 500,
-  slidesToShow: 2, // Default on desktop
-  slidesToScroll: 1,
-  nextArrow: <NextArrow />,
-  prevArrow: <PrevArrow />,
-  responsive: [
-    {
-      breakpoint: 1024, // Tablet and below
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false, // Optional: hide arrows on smaller screens for better UX
-        dots: true, // Show dots instead for easier navigation
+  function PrevArrow(props) {
+    const { onClick } = props;
+    return (
+      <div
+        className="slick-arrow slick-prev"
+        style={{
+          display: "block",
+          left: "-35px",
+          fontSize: "30px",
+          color: "#EE4E34",
+          cursor: "pointer",
+        }}
+        onClick={onClick}
+      >
+        <FaArrowAltCircleLeft />
+      </div>
+    );
+  }
+  const settings = {
+    dots: false,
+    infinite: bookings.length > 1,
+    speed: 500,
+    slidesToShow: 2, // Default on desktop
+    slidesToScroll: 1,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024, // Tablet and below
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false, // Optional: hide arrows on smaller screens for better UX
+          dots: true, // Show dots instead for easier navigation
+        },
       },
-    },
-    {
-      breakpoint: 640, // Mobile phones
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        dots: true,
+      {
+        breakpoint: 640, // Mobile phones
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true,
+        },
       },
-    },
-  ],
-};
+    ],
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8">
       <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-          <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+          <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           <div className="text-center px-6">
-            <h2 className="text-4xl font-extrabold text-purple-700">
+            <h2 className="text-4xl font-extrabold text-[#EE4E34]">
               My Appointmnets
             </h2>
-           
           </div>
-          <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+          <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
         </div>
       </div>
       {bookings.length > 0 ? (
@@ -115,7 +113,7 @@ const settings = {
             <div key={index} className="px-3 ">
               <div className="bg-white rounded-2xl h-[300px] shadow-lg p-6 border border-gray-200 flex flex-col justify-between overflow-y-auto">
                 {/* Shop Name */}
-                <h3 className="text-xl font-semibold text-purple-700 mb-2">
+                <h3 className="text-xl font-semibold text-[#EE4E34] mb-2">
                   {booking.shopName}
                 </h3>
 

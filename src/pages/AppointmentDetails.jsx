@@ -45,13 +45,13 @@ export default function AppointmentDetails() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
       <p
-        className="text-[#6961AB] flex items-center cursor-pointer font-medium underline mb-4"
+        className="text-[#EE4E34] flex items-center cursor-pointer font-medium underline mb-4"
         onClick={() => navigate(-1)}
       >
-        <FaChevronLeft className="mx-2 text-[#6961AB] shrink-0" />
+        <FaChevronLeft className="mx-2 text-[#EE4E34] shrink-0" />
         Back
       </p>
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#6961AB]">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#EE4E34]">
         Appointment Detail
       </h2>
       {/* Shop Details */}
@@ -71,7 +71,7 @@ export default function AppointmentDetails() {
           <PhoneOutlined /> {appointment.shopMobile}
         </p>
         <div className="flex justify-end">
-          <Button type="primary" className="mt-2 bg-[#6961AB]">
+          <Button type="primary" className="mt-2 bg-[#EE4E34]">
             Chat
           </Button>
         </div>
@@ -122,7 +122,7 @@ export default function AppointmentDetails() {
             <span>Discount</span>
             <span>-₹{appointment.discount}</span>
           </div>
-          <div className="flex justify-between font-bold text-[#6961AB] mt-2 border-t pt-2">
+          <div className="flex justify-between font-bold text-[#EE4E34] mt-2 border-t pt-2">
             <span>Grand Total</span>
             <span>₹{grandTotal}</span>
           </div>

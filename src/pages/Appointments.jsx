@@ -130,7 +130,7 @@ export default function Appointments() {
             </div>
             <div className="flex items-center gap-3">
               <Button
-                style={{ backgroundColor: "#6961AB", color: "white" }}
+                style={{ backgroundColor: "#EE4E34", color: "white" }}
                 onClick={() => openDetailsPage(appt)}
               >
                 View Details
@@ -168,7 +168,7 @@ export default function Appointments() {
                 whileTap={{ scale: 0.95 }}
                 className={`px-5 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-sm font-semibold select-none transition ${
                   activeTab === id
-                    ? "bg-[#6961AB] text-white shadow-lg"
+                    ? "bg-[#EE4E34] text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 }`}
                 aria-current={activeTab === id ? "true" : undefined}

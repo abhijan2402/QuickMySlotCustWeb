@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-        <h2 className="text-2xl font-bold text-center text-purple-700">
+        <h2 className="text-2xl font-bold text-center text-[#EE4E34]">
           Forgot Password?
         </h2>
         <p className="text-gray-500 text-center mb-4">
@@ -35,7 +35,7 @@ export default function ForgotPassword() {
           <Button
             type="primary"
             htmlType="submit"
-            className="w-full bg-purple-700 hover:bg-purple-800"
+            className="w-full bg-[#EE4E34] hover:bg-purple-800"
             loading={isLoading}
           >
             Send Reset Link

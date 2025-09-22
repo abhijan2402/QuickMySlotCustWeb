@@ -6,8 +6,11 @@ import logo from "../assets/clogo.png";
 import { FaLocationPin } from "react-icons/fa6";
 import { BiHeart } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -80,7 +83,7 @@ export default function Navbar() {
                   onClick={() => handleClick(item)}
                   className={`cursor-pointer px-3 py-1 rounded transition ${
                     active === item
-                      ? "bg-[#6961ab] text-white"
+                      ? "bg-[#EE4E34] text-white"
                       : "hover:bg-[#eee]"
                   }`}
                 >
@@ -95,10 +98,10 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={() => navigate("/notifications")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
               >
                 <div
-                  className="relative p-2 rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                  className="relative p-2 rounded-full border bg-[#EE4E34] border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                   }}
@@ -114,26 +117,26 @@ export default function Navbar() {
               </button>
               <button
                 onClick={() => navigate("/profile")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
               >
                 <div
-                  className="w-8 h-8 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
-                  title={username}
+                  className="w-8 h-8 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
+                  title={user?.name}
                 >
-                  {username.charAt(0).toUpperCase()}
+                  {user?.name.charAt(0).toUpperCase()}
                 </div>
               </button>
               <div className="flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
                 <div className="flex flex-col">
                   <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
+                    <div className="relative p-0 rounded-full  text-[#EE4E34] transition duration-300">
                       <FaMapMarkerAlt className="w-4 h-4" />
                     </div>
-                    <span className="font-semibold text-[#6961ab] text-[14px]">
+                    <span className="font-semibold text-[#EE4E34] text-[14px]">
                       {"Jaipur"}
                     </span>
                   </div>
-                  <p className="text-[12px] pl-1 text-[#6961ab] font-semibold">
+                  <p className="text-[12px] pl-1 text-[#EE4E34] font-semibold">
                     {"Abc, Jaipur, Rajasthan"}
                   </p>
                 </div>
@@ -147,14 +150,14 @@ export default function Navbar() {
               <div className="md:hidden flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
                 <div className="flex flex-col">
                   <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
+                    <div className="relative p-0 rounded-full  text-[#EE4E34] transition duration-300">
                       <FaMapMarkerAlt className="w-4 h-4" />
                     </div>
-                    <span className="font-semibold text-[#6961ab] text-[14px]">
+                    <span className="font-semibold text-[#EE4E34] text-[14px]">
                       {"Jaipur"}
                     </span>
                   </div>
-                  <p className="text-[12px] pl-1 text-[#6961ab] font-semibold">
+                  <p className="text-[12px] pl-1 text-[#EE4E34] font-semibold">
                     {"Abc, Jaipur, Rajasthan"}
                   </p>
                 </div>
@@ -195,7 +198,7 @@ export default function Navbar() {
                     onClick={() => handleClick(item)}
                     className={`cursor-pointer text-center transition px-3 py-1 rounded ${
                       active === item
-                        ? "bg-[#6961ab] text-white"
+                        ? "bg-[#EE4E34] text-white"
                         : "hover:bg-[#eee]"
                     }`}
                   >

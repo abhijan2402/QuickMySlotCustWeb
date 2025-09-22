@@ -22,19 +22,12 @@ const { TabPane } = Tabs;
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const { data: profile } = useGetProfileQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [changePassOpen, setChangePassOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-
-  // const [profile, setProfile] = useState({
-  //   name: "John Doe",
-  //   email: "johndoe@gmail.com",
-  //   phone: "+91 9876543210",
-  //   wallet: 1200,
-  //   image: null,
-  // });
 
   const handleLogoOut = () => {
     dispatch(logout());
@@ -132,22 +125,19 @@ export default function ProfilePage() {
         {/* Profile Card */}
         <div className="bg-white p-6 rounded-2xl shadow-md flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {profile?.data?.image ? (
-              <img
-                src={profile?.data?.image}
-                alt="Profile"
-                className="w-20 h-20 rounded-full object-cover"
-              />
-            ) : (
-              <FaUserCircle className="text-5xl text-gray-600" />
-            )}
+            <div
+              className="w-14 h-14 rounded-full bg-[#EE4E34] text-white flex items-center text-[26px] justify-center font-semibold cursor-pointer select-none"
+              title={user?.name}
+            >
+              {user?.name.charAt(0).toUpperCase()}
+            </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800">
-                {profile?.data?.name}
+                {user?.name || "NA"}
               </h2>
-              <p className="text-gray-500">{profile?.data?.email}</p>
+              <p className="text-gray-500">{user?.email || "NA"}</p>
               <p className="text-sm text-gray-400">
-                {profile?.data?.phone_number}
+                {user?.phone_number || "NA"}
               </p>
             </div>
           </div>
@@ -182,7 +172,7 @@ export default function ProfilePage() {
           </Button>
           <Button
             onClick={() => setChangePassOpen(true)}
-            style={{ backgroundColor: "#6961AB", color: "#fff" }}
+            style={{ backgroundColor: "#EE4E34", color: "#fff" }}
           >
             Change Password
           </Button>
@@ -276,9 +266,9 @@ export default function ProfilePage() {
           <Form
             layout="vertical"
             initialValues={{
-              name: profile?.data?.name,
-              email: profile?.data?.email,
-              phone: profile?.data?.phone,
+              name: user?.name,
+              email: user?.email,
+              phone: user?.phone,
             }}
             onFinish={onFinish}
           >
@@ -337,7 +327,7 @@ export default function ProfilePage() {
               <Button onClick={handleCancel} className="mr-3">
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit" className="bg-[#6961AB]">
+              <Button type="primary" htmlType="submit" className="bg-[#EE4E34]">
                 Save
               </Button>
             </Form.Item>

@@ -1,10 +1,23 @@
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    font-family: "Montserrat", sans-serif;
+}
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 1.5s infinite;
+}
 
 /* width */
 ::-webkit-scrollbar {

@@ -19,14 +19,13 @@ import OffersList from "../pages/OffersList";
 import PricingModal from "../pages/PricingModal";
 import ProtectedRoute from "./ProtectedRoute";
 import Signup from "../pages/Auth/SignUp";
-import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 export default function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+
       {/* ✅ Routes WITH Layout */}
       <Route
         element={
@@ -36,9 +35,12 @@ export default function AppRoutes() {
         }
       >
         <Route path="/" element={<Home />} />
-        <Route path="/services/:type" element={<ServicesPage />} />
+        <Route path="/services/:id" element={<ServicesPage />} />
         <Route path="/services/:type/:shopId" element={<ServiceDetailPage />} />
-        <Route path="/book-service/:shopId" element={<BookServicePage />} />
+        <Route
+          path="/book-service/:type/:shopId/:serviceId"
+          element={<BookServicePage />}
+        />
         <Route path="/appointments" element={<Appointments />} />
         <Route
           path="/appointments/:type/:id"

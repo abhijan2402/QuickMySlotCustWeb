@@ -22,7 +22,7 @@ export function InviteModal({ open, onClose }) {
       <Input.Group compact className="mb-4">
         <Input style={{ width: "80%" }} value={inviteLink} readOnly />
         <Button
-          style={{ backgroundColor: "#6961AB", color: "#fff" }}
+          style={{ backgroundColor: "#EE4E34", color: "#fff" }}
           onClick={copyLink}
         >
           Copy
@@ -60,7 +60,7 @@ export function InviteModal({ open, onClose }) {
       <Button
         block
         type="primary"
-        style={{ backgroundColor: "#6961AB", borderColor: "#6961AB" }}
+        style={{ backgroundColor: "#EE4E34", borderColor: "#EE4E34" }}
         onClick={copyLink}
       >
         Share Invite Link

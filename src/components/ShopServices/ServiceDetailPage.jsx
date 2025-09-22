@@ -9,27 +9,30 @@ import { BiHeart } from "react-icons/bi";
 import { Tooltip } from "antd";
 import { useState } from "react";
 import RateReviewModal from "../Modals/RateReviewModal";
+import {
+  useGetvendorPromoCodeQuery,
+  useGetvendorQuery,
+} from "../../services/vendorApi";
+import { useGetcategoryQuery } from "../../services/categoryApi";
+import NoDataAvailable from "../../pages/NoDataAvailable";
+import CardCarouselLoader from "../CardCarouselLoader";
+import SpinnerLodar from "../SpinnerLodar";
+import { div } from "framer-motion/m";
 
 export default function ServiceDetailPage() {
-  const { shopId } = useParams();
+  const { shopId, type } = useParams();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const shop = salondata.find((s) => s.id === Number(shopId));
+  const { data: category, isLoading: catLoading } = useGetcategoryQuery();
+  const categoryData = category?.data?.find((cat) => cat.name === type);
 
-  if (!shop) {
-    return (
-      <div className="max-w-4xl mx-auto p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Shop Not Found</h2>
-        <button
-          onClick={() => navigate(-1)}
-          className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
+  const { data, isLoading: shopLoading } = useGetvendorQuery(categoryData?.id);
+  const shopData = data?.data?.find((cat) => cat.id === Number(shopId));
+
+  const { data: offersData } = useGetvendorPromoCodeQuery(shopData?.id);
+
+  console.log(shopData);
 
   const sliderSettings = {
     dots: true,
@@ -41,18 +44,34 @@ export default function ServiceDetailPage() {
     slidesToScroll: 1,
   };
 
-  const offers = Array.isArray(shop.offer)
-    ? shop.offer
-    : shop.offer
-    ? [shop.offer]
+  const offers = Array.isArray(offersData?.data)
+    ? offersData?.data
+    : offersData?.data
+    ? [offersData?.data]
     : [];
+
+  // console.log(offers);
+
+  // If loading category or shop data, show loader
+  if (catLoading || shopLoading) {
+    return <SpinnerLodar />;
+  }
+
+  // If shopData is not found after loading
+  if (!shopData) {
+    return (
+      <div className="max-w-7xl mx-auto p-8 text-center">
+        <NoDataAvailable message="Shop data not found" btn={true} />
+      </div>
+    );
+  }
 
   return (
     <>
       <section className="max-w-7xl mx-auto p-6">
         <button
           onClick={() => navigate(-1)}
-          className="text-purple-700 underline mb-6"
+          className="text-[#EE4E34] underline mb-6"
         >
           &larr; Back to Services
         </button>
@@ -64,84 +83,120 @@ export default function ServiceDetailPage() {
             {/* Header */}
             <div>
               <div className="flex justify-between items-center">
-                <h1 className="text-4xl font-bold text-purple-700 mb-2">
-                  {shop.name}
+                <h1 className="text-4xl font-bold text-[#EE4E34] mb-2">
+                  {shopData?.business_name || "NA"}
                 </h1>
                 <Tooltip title="Add to Favourite">
-                  <button className="bg-[#6961AB] flex items-center rounded-full p-2 text-xl">
+                  <button className="bg-[#EE4E34] flex items-center rounded-full p-2 text-xl">
                     <BiHeart />
                   </button>
                 </Tooltip>
               </div>
-              <p className="text-gray-600">{shop.address}</p>
+              <p className="text-gray-600">
+                {shopData?.location_area_served}, {shopData?.exact_location}
+              </p>
               <div className="flex flex-wrap gap-4 mt-3 text-gray-700">
                 <span>
-                  <b>Available:</b> {shop.time}
+                  <b>Available:</b>
+                  {"  "}
+                  {shopData?.working_days[0]} -{" "}
+                  {shopData?.working_days[shopData.working_days.length - 1]}{" "}
+                  {"|"} {shopData?.daily_end_time} -{" "}
+                  {shopData?.daily_start_time}
                 </span>
                 <span>
-                  <b>Experience:</b> {shop.experience}
+                  <b>Experience:</b> {shopData?.years_of_experience}
                 </span>
               </div>
 
               <div className="flex flex-wrap gap-4 mt-4">
-                <button className="flex items-center gap-2 bg-transparent text-black border border-purple-700 px-4 py-2 rounded hover:bg-purple-200 transition">
+                <button className="flex items-center gap-2 bg-transparent text-black border border-[#EE4E34] px-4 py-2 rounded hover:bg-orange-100 transition">
                   <BsPhoneFill /> Contact
                 </button>
-                <button className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+                <button className="flex items-center gap-2 bg-[#EE4E34] text-white px-4 py-2 rounded hover:bg-[#EE4E34] transition">
                   <MdMap /> Get Directions
                 </button>
               </div>
             </div>
 
             {/* Salon Images */}
-            <div className="rounded-lg overflow-hidden shadow-lg">
-              <Slider {...sliderSettings}>
-                {shop.images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt={`${shop.name} ${i + 1}`}
-                    className="w-full h-[400px] object-cover"
-                  />
-                ))}
-              </Slider>
+            <div className="rounded-lg border overflow-hidden shadow-sm">
+              {shopData?.portfolio_images?.length > 0 ? (
+                <Slider {...sliderSettings}>
+                  {shopData.portfolio_images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img?.image_url}
+                      alt={shopData?.business_name || "NA"}
+                      className="border h-[350px] object-cover"
+                    />
+                  ))}
+                </Slider>
+              ) : (
+                <div className="w-full h-[350px] flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
+                  Image not available
+                </div>
+              )}
             </div>
 
             {/* Services Offered */}
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black">
-                Services Offered
-              </h2>
-              <div className="flex flex-wrap gap-4">
-                {shop.services.map((service, i) => (
-                  <div
-                    key={i}
-                    onClick={() => navigate(`/book-service/${shop.id}`)}
-                    className="cursor-pointer bg-gray-100 rounded-lg p-4 shadow hover:shadow-lg transition w-40 text-center"
-                  >
-                    <p className="font-semibold text-purple-700">
-                      {service.service_name}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {shopData?.sub_services?.length > 0 && (
+              <>
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                    Services Offered
+                  </h2>
 
-            {/* About Shop */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    {shopData?.sub_services?.map((service, i) => (
+                      <div
+                        key={i}
+                        onClick={() =>
+                          navigate(
+                            `/book-service/${categoryData?.name}/${shopData?.id}/${service.id}`
+                          )
+                        }
+                        className="cursor-pointer bg-white border rounded-xl p-4 shadow-sm 
+                   hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center"
+                      >
+                        {/* Show image only if available */}
+                        {service?.image_url ? (
+                          <img
+                            src={service.image_url}
+                            alt={service?.name}
+                            className="w-20 h-20 rounded-md object-contain mb-3"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded-md mb-3 text-gray-400 text-sm">
+                            No Image
+                          </div>
+                        )}
+
+                        <p className="font-medium text-gray-800 text-sm sm:text-base">
+                          {service?.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* About shopData */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black">
-                About This Shop
+              <h2 className="text-xl font-semibold mb-4 text-black">
+                About This shopData
               </h2>
-              <p className="text-gray-700">{shop.about}</p>
+              <p className="text-gray-700">{shopData?.business_description}</p>
             </div>
 
             {/* Amenities */}
-            <div>
+            {/* <div>
               <h2 className="text-2xl font-semibold mb-4 text-black">
                 Amenities
               </h2>
               <div className="flex flex-wrap gap-4">
-                {shop.amenities.map((amenity, i) => (
+                {shopData.amenities.map((amenity, i) => (
                   <div
                     key={i}
                     className="bg-gray-200 rounded-xl px-8 py-2 shadow text-center"
@@ -152,62 +207,101 @@ export default function ServiceDetailPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Gallery */}
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black">
-                Gallery
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {shop.gallery.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt={`${shop.name} gallery ${i + 1}`}
-                    className="rounded shadow-md object-cover w-full h-40"
-                  />
-                ))}
+
+            {shopData?.portfolio_images?.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-black">
+                  Gallery
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {shopData?.portfolio_images?.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img?.image_url}
+                      alt={`${shopData.name} gallery ${i + 1}`}
+                      className="rounded shadow-md object-cover w-full h-40"
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right Sidebar */}
           <aside className="space-y-6 lg:sticky lg:top-6 h-max">
             {/* Book Button */}
             <button
-              className="w-full bg-purple-600 text-white text-lg font-semibold py-3 rounded-lg hover:bg-purple-700 transition"
-              onClick={() => navigate(`/book-service/${shop.id}`)}
+              className="w-full bg-[#EE4E34] text-white text-lg font-semibold py-3 rounded-lg hover:bg-[#EE4E34] transition"
+              onClick={() => navigate(`/book-service/${shopData.id}`)}
             >
               Book Services
             </button>
 
             {/* Offers */}
-            {offers.length > 0 && (
-              <div className="border p-2 rounded-2xl shadow-sm overflow-hidden">
-                <div className="px-2 text-white font-bold flex items-center justify-between">
-                  <span className="flex text-black text-sm font-semibold items-center gap-2">
+            {offers?.length > 0 && (
+              <div className="border p-4 rounded-2xl shadow-sm bg-white">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-gray-800">
                     🎁 Offers Available
                   </span>
-                  <span className="bg-purple-700 text-white px-4 py-1 text-sm font-semibold rounded-full">
-                    {offers.length}
+                  <span className="bg-[#EE4E34] text-white px-2 py-1 text-[8px] font-semibold rounded-full">
+                    {offers?.length}
                   </span>
                 </div>
+
+                {/* Slider */}
                 <Slider
                   dots={true}
-                  infinite={offers.length > 1}
-                  autoplay={offers.length > 1}
-                  autoplaySpeed={3000}
+                  infinite={offers?.length > 1}
+                  autoplay={offers?.length > 1}
+                  autoplaySpeed={4000}
                   arrows={false}
                   slidesToShow={1}
                   slidesToScroll={1}
                 >
-                  {offers.map((offer, i) => (
+                  {offers?.map((offer, i) => (
                     <div
                       key={i}
-                      className="py-2 px-6 text-center text-green-600 text-lg font-medium transition transform hover:scale-105"
+                      className="p-4 border rounded-xl bg-gradient-to-r from-orange-50 to-orange-100 text-center shadow hover:shadow-md transition-all duration-300"
                     >
-                      {offer}
+                      {/* Promo Code */}
+                      <div className="relative flex items-center mb-1">
+                        {/* Promo Code */}
+                        <p className="text-medium font-bold text-[#EE4E34] tracking-widest">
+                          {offer?.promo_code}
+                        </p>
+
+                        {/* Type & Amount Badge */}
+                        <span className="absolute -top-2 -right-3 bg-[#EE4E34] text-white text-[10px] font-semibold px-3 py-1 rounded-full shadow">
+                          {offer?.type === "flat"
+                            ? `Flat ₹${offer?.amount} OFF`
+                            : `${offer?.amount}% OFF`}
+                        </span>
+                      </div>
+
+                      {/* Expiry Date */}
+                      {/* <p className="text-sm text-gray-500">
+                        Valid until{" "}
+                        {new Date(offer?.expired_on).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )}
+                      </p> */}
+
+                      {/* Optional Description */}
+                      {offer?.description && (
+                        <p className="text-xs text-gray-600 mt-0 line-clamp-2">
+                          {offer?.description}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </Slider>
@@ -220,7 +314,7 @@ export default function ServiceDetailPage() {
                 ⭐ Customer Reviews
               </h2>
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300">
-                {shop.reviews.map((review, i) => (
+                {/* {shopData.reviews.map((review, i) => (
                   <div
                     key={i}
                     className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition"
@@ -243,12 +337,12 @@ export default function ServiceDetailPage() {
                       {review.comment}
                     </p>
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
 
             <button
-              className="w-full bg-purple-200 text-purple-600 text-md font-semibold py-2 rounded-lg hover:bg-purple-700 transition hover:text-white"
+              className="w-full bg-purple-200 text-[#EE4E34] text-md font-semibold py-2 rounded-lg hover:bg-[#EE4E34] transition hover:text-white"
               onClick={() => setModalOpen(true)}
             >
               Rate & Review

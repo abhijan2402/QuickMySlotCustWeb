@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-export const profileApi = createApi({
-  reducerPath: "profileApi",
+export const supportApi = createApi({
+  reducerPath: "supportApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
     prepareHeaders: (headers, { getState }) => {
@@ -10,24 +10,23 @@ export const profileApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    // Get profile (GET request)
-    getProfile: builder.query({
+    // Get support (GET request)
+    getsupport: builder.query({
       query: () => ({
-        url: "profile",
+        url: `supports`,
         method: "GET",
       }),
-      providesTags: ["profile"],
+      providesTags: ["support"],
     }),
-    // Update profile (POST request)
-    updateProfile: builder.mutation({
-      query: (fd) => ({
-        url: "customer/profile/update",
+    addsupport: builder.mutation({
+      query: (formData) => ({
+        url: `supports`,
         method: "POST",
-        body: fd,
+        body: formData,
       }),
-      invalidatesTags: ["profile"],
+      invalidatesTags: ["support"],
     }),
   }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = profileApi;
+export const { useGetsupportQuery, useAddsupportMutation } = supportApi;

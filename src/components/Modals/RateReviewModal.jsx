@@ -27,7 +27,7 @@ export default function RateReviewModal({ open, onClose }) {
         <Button
           key="cancel"
           onClick={onClose}
-          style={{ borderColor: "#6961AB", color: "#6961AB" }}
+          style={{ borderColor: "#EE4E34", color: "#EE4E34" }}
         >
           Cancel
         </Button>,
@@ -36,8 +36,8 @@ export default function RateReviewModal({ open, onClose }) {
           type="primary"
           onClick={handleOk}
           style={{
-            backgroundColor: "#6961AB",
-            borderColor: "#6961AB",
+            backgroundColor: "#EE4E34",
+            borderColor: "#EE4E34",
             color: "#fff",
           }}
         >

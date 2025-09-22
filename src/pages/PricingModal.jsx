@@ -166,7 +166,7 @@ const PricingModal = () => {
               size="large"
               className="mt-auto"
               onClick={() => openModal(plan)}
-              style={{ backgroundColor: "#6961AB", color: "white" }}
+              style={{ backgroundColor: "#EE4E34", color: "white" }}
             >
               Subscribe
             </Button>

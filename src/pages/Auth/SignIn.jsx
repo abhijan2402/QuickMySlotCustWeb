@@ -117,7 +117,7 @@ export default function Signin() {
                 block
                 size="large"
                 loading={signingUp}
-                className="bg-[#6961AB] hover:bg-purple-800"
+                className="bg-[#EE4E34] hover:bg-purple-800"
               >
                 Send OTP
               </Button>
@@ -157,7 +157,7 @@ export default function Signin() {
                   onClick={handleVerifyOtp}
                   size="large"
                   loading={verifying}
-                  className="bg-purple-700 hover:bg-purple-800 text-sm"
+                  className="bg-[#EE4E34] hover:bg-purple-800 text-sm"
                 >
                   Verify OTP
                 </Button>
@@ -169,7 +169,7 @@ export default function Signin() {
             <p className="text-gray-600">Don't have an account?</p>{" "}
             <span
               onClick={() => navigate("/signup")}
-              className="text-[#6961AB] font-medium cursor-pointer"
+              className="text-[#EE4E34] font-medium cursor-pointer"
             >
               Sign Up
             </span>

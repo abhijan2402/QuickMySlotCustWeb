@@ -8,7 +8,7 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="text-center max-w-6xl mx-auto space-y-6">
         <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-          About <span className="text-[#6961AB]">Our Company</span>
+          About <span className="text-[#EE4E34]">Our Company</span>
         </h1>
         <p className="text-lg text-gray-600">
           We are committed to delivering exceptional services that empower your

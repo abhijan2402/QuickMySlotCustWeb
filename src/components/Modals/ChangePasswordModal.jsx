@@ -48,7 +48,7 @@ export function ChangePasswordModal({ open, onClose }) {
           <Input.Password />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="bg-[#6961AB]">
+          <Button type="primary" htmlType="submit" className="bg-[#EE4E34]">
             Change Password
           </Button>
         </Form.Item>

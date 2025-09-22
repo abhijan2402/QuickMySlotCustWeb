@@ -45,7 +45,7 @@ const OffersList = () => {
       <div className="max-w-6xl mx-auto py-6 px-2">
         <Breadcrumb propertyTitle={"Offers"} />
         <h1 className="text-3xl md:text-4xl mb-5 mt-6 px-5 font-extrabold text-gray-900 leading-tight">
-          Offers <span className="text-[#6961AB]">Avaliable</span>
+          Offers <span className="text-[#EE4E34]">Avaliable</span>
         </h1>
         <motion.div
           className="space-y-4 px-5"
@@ -59,7 +59,7 @@ const OffersList = () => {
           <div className="max-w-6xl mx-auto mt-5 mb-6">
             <div className="bg-gradient-to-r from-[#e1ecfe] to-[#c5fcfa] rounded-xl shadow flex flex-col md:flex-row md:justify-around py-6 px-4 md:px-8">
               <div className="flex-1 flex flex-col items-center mb-6 md:mb-0">
-                <span className="text-white bg-purple-600 px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                <span className="text-white bg-[#ee4d348c] px-2 py-1 rounded-md font-semibold  text-sm mb-2">
                   STEP 1
                 </span>
                 <span className="text-gray-800 font-semibold text-center">
@@ -67,7 +67,7 @@ const OffersList = () => {
                 </span>
               </div>
               <div className="flex-1 flex flex-col items-center mb-6 md:mb-0">
-                <span className="text-white bg-purple-700 px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                <span className="text-white bg-[#ee4d34c8] px-2 py-1 rounded-md font-semibold  text-sm mb-2">
                   STEP 2
                 </span>
                 <span className="text-gray-800 font-semibold text-center">
@@ -75,7 +75,7 @@ const OffersList = () => {
                 </span>
               </div>
               <div className="flex-1 flex flex-col items-center">
-                <span className="text-white bg-[#5F579A] px-2 py-1 rounded-md font-semibold  text-sm mb-2">
+                <span className="text-white bg-[#EE4E34] px-2 py-1 rounded-md font-semibold  text-sm mb-2">
                   STEP 3
                 </span>
                 <span className="text-gray-800 font-semibold text-center">
@@ -119,7 +119,7 @@ const OffersList = () => {
                 </button>
               </div>
               <motion.button
-                className="self-center md:self-start mt-4 md:mt-0 btn btn-outline-blue border-2 border-blue-500 text-blue-500 rounded-lg px-4 py-2 text-sm flex items-center gap-2 hover:bg-blue-50 transition justify-center "
+                className="self-center md:self-start mt-4 md:mt-0 btn btn-outline-blue border-2 border-[#EE4E34] text-[#EE4E34] rounded-lg px-4 py-2 text-sm flex items-center gap-2 hover:bg-blue-50 transition justify-center "
                 whileTap={{ scale: 0.95 }}
               >
                 <span>Apply</span>
