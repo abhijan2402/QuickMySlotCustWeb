@@ -21,40 +21,32 @@ export default function ProfileModal({
 
   // Handle form submission
   const handleFinish = async (values) => {
-    try {
-      const fd = new FormData();
+    const fd = new FormData();
 
-      // Append all form fields to FormData
-      fd.append("user_id", userID);
-      fd.append("name", values.name);
-      fd.append("email", values.email);
-      fd.append("phone", values.phone);
-      fd.append("address", values.address);
-      fd.append("city", values.city);
-      fd.append("state", values.state || "");
-      fd.append("country", values.country || "");
-      fd.append("zip_code", values.zip_code || "");
+    fd.append("user_id", userID);
+    fd.append("name", values.name);
+    fd.append("email", values.email);
+    // fd.append("phone", values.phone);
+    fd.append("address", values.address);
+    fd.append("city", values.city);
+    fd.append("state", values.state || "");
+    fd.append("country", values.country || "");
+    fd.append("zip_code", values.zip_code || "");
 
-      const profileResponse = await fetch(`${baseUrl}customer/profile/update`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tempToken}`,
-        },
-        body: fd,
-      });
+    const profileResponse = await fetch(`${baseUrl}customer/profile/update`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${tempToken}`,
+      },
+      body: fd,
+    });
 
-      if (!profileResponse.ok) {
-        throw new Error("Failed to fetch profile");
-      }
-
-      const profileData = await profileResponse.json();
-
-      toast.success("Signup successful!");
-      onNext();
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile. Try again.");
+    if (!profileResponse.ok) {
+      throw new Error("Failed to fetch profile");
     }
+    const profileData = await profileResponse.json();
+    toast.success("Signup successful!");
+    onNext();
   };
 
   return (
@@ -103,7 +95,7 @@ export default function ProfileModal({
         </Form.Item>
 
         {/* Phone */}
-        <Form.Item
+        {/* <Form.Item
           name="phone"
           label="Phone Number"
           rules={[
@@ -124,7 +116,7 @@ export default function ProfileModal({
               form.setFieldsValue({ phone: digits });
             }}
           />
-        </Form.Item>
+        </Form.Item> */}
 
         {/* Address */}
         <Form.Item

@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { FaHeart, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa"; // For wishlist and location icons
+import {
+  FaHeart,
+  FaMapMarkerAlt,
+  FaShoppingCart,
+  FaUserCircle,
+} from "react-icons/fa"; // For wishlist and location icons
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/clogo.png";
@@ -7,9 +12,13 @@ import { FaLocationPin } from "react-icons/fa6";
 import { BiHeart } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
+import { MdOutlineMyLocation } from "react-icons/md";
+import { useGetCartListQuery } from "../services/vendorApi";
 
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
+  const { data: cartList } = useGetCartListQuery();
+  const cartCount = cartList?.data?.total_items || 0;
   console.log(user);
   const navigate = useNavigate();
   const location = useLocation();
@@ -81,7 +90,7 @@ export default function Navbar() {
                 <li
                   key={item}
                   onClick={() => handleClick(item)}
-                  className={`cursor-pointer px-3 py-1 rounded transition ${
+                  className={`cursor-pointer px-3 py-1 text-sm rounded transition ${
                     active === item
                       ? "bg-[#EE4E34] text-white"
                       : "hover:bg-[#eee]"
@@ -98,46 +107,45 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={() => navigate("/notifications")}
-                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
               >
                 <div
-                  className="relative p-2 rounded-full border bg-[#EE4E34] border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                  }}
+                  className="w-6 h-6 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold"
+                  title={user?.name}
                 >
-                  <span className=" text-center text-[#fff] text-xl">
-                    {" "}
-                    <BsBellFill />
+                  <span className="relative p-1 rounded-full bg-[#EE4E34]">
+                    <BsBellFill className="text-sm text-white" />
                   </span>
-                  {/* {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"></span>
-                  )} */}
                 </div>
               </button>
               <button
-                onClick={() => navigate("/profile")}
-                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition duration-300"
+                onClick={() => navigate("/cart")}
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
               >
-                <div
-                  className="w-8 h-8 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
-                  title={user?.name}
-                >
-                  {user?.name.charAt(0).toUpperCase()}
-                </div>
+                {/* Cart Icon */}
+                <FaShoppingCart className="w-6 h-6" />
+
+                {/* Count Badge */}
+                {cartList?.data?.total_items > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
               </button>
-              <div className="flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
-                <div className="flex flex-col">
-                  <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#EE4E34] transition duration-300">
-                      <FaMapMarkerAlt className="w-4 h-4" />
-                    </div>
-                    <span className="font-semibold text-[#EE4E34] text-[14px]">
-                      {"Jaipur"}
-                    </span>
-                  </div>
-                  <p className="text-[12px] pl-1 text-[#EE4E34] font-semibold">
-                    {"Abc, Jaipur, Rajasthan"}
+              <div
+                role="button"
+                className="flex items-center space-x-2 bg-white rounded-lg px-3 py-1 border border-gray-300 hover:shadow-md transition-shadow cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+              >
+                <MdOutlineMyLocation
+                  className="w-5 h-5 text-[#EE4E34]"
+                  aria-hidden="true"
+                />
+                <div className="flex flex-col leading-none">
+                  <span className="font-bold text-[#EE4E34] text-[14px]">
+                    {user?.city || "NA"}
+                  </span>
+                  <p className="text-[10px] mt-1 text-gray-600">
+                    {user?.address || "NA"}
                   </p>
                 </div>
               </div>
@@ -145,31 +153,35 @@ export default function Navbar() {
           )}
 
           {/* Mobile Menu Toggle */}
-          {!isMinimalPage && (
-            <>
-              <div className="md:hidden flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
-                <div className="flex flex-col">
-                  <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#EE4E34] transition duration-300">
-                      <FaMapMarkerAlt className="w-4 h-4" />
-                    </div>
-                    <span className="font-semibold text-[#EE4E34] text-[14px]">
-                      {"Jaipur"}
+          <div className="flex items-center gap-2 md:hidden">
+            {!isMinimalPage && (
+              <>
+                <div
+                  className="flex items-center bg-white rounded-lg px-3 py-1 border border-gray-300"
+                  title="Click to select a different location"
+                >
+                  <MdOutlineMyLocation
+                    className="w-5 h-5 text-[#EE4E34]"
+                    aria-hidden="true"
+                  />
+                  <div className="flex flex-col leading-none ml-2">
+                    <span className="font-bold text-[#EE4E34] text-[14px]">
+                      {user?.city || "NA"}
                     </span>
+                    <p className="text-[10px] mt-1 text-gray-600">
+                      {user?.address || "NA"}
+                    </p>
                   </div>
-                  <p className="text-[12px] pl-1 text-[#EE4E34] font-semibold">
-                    {"Abc, Jaipur, Rajasthan"}
-                  </p>
                 </div>
-              </div>
-              <button
-                className="md:hidden text-[#000] text-3xl"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                ☰
-              </button>
-            </>
-          )}
+                <button
+                  className="md:hidden text-[#000] text-3xl"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                >
+                  ☰
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -220,6 +232,23 @@ export default function Navbar() {
                           {wishlistCount}
                         </span>
                       )} */}
+                    </div>
+                  </li>
+
+                  <li>
+                    <div
+                      className="relative cursor-pointer text-xl text-black"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/cart");
+                      }}
+                    >
+                      <span className=" text-cente text-xl">Cart</span>
+                      {cartList?.data?.total_items > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                          {cartCount}
+                        </span>
+                      )}
                     </div>
                   </li>
 

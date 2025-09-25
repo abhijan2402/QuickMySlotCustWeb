@@ -13,12 +13,7 @@ import {
 } from "antd";
 import { BsTrash2 } from "react-icons/bs";
 import { useGetcategoryQuery } from "../../services/categoryApi";
-import {
-  useGetCartListQuery,
-  useGetvendorQuery,
-  useRemoveCartListMutation,
-} from "../../services/vendorApi";
-import { toast } from "react-toastify";
+import { useGetvendorQuery } from "../../services/vendorApi";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -43,8 +38,7 @@ const slotOptions = {
 export default function BookServicePage() {
   const { shopId, type, serviceId } = useParams();
   const navigate = useNavigate();
-  const [removeCartList] = useRemoveCartListMutation();
-  const { data: cartList } = useGetCartListQuery();
+
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
   const { data } = useGetvendorQuery(categoryData?.id);
@@ -66,16 +60,16 @@ export default function BookServicePage() {
   const [confirmedBooking, setConfirmedBooking] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState({ time: "", fee: 0 });
 
-  // if (!shopServices) {
-  //   return (
-  //     <div className="max-w-4xl mx-auto p-8 text-center">
-  //       <h2 className="text-2xl font-bold mb-4">Shop Not Found</h2>
-  //       <Button type="primary" onClick={() => navigate(-1)}>
-  //         Go Back
-  //       </Button>
-  //     </div>
-  //   );
-  // }
+  if (!shopServices) {
+    return (
+      <div className="max-w-4xl mx-auto p-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">Shop Not Found</h2>
+        <Button type="primary" onClick={() => navigate(-1)}>
+          Go Back
+        </Button>
+      </div>
+    );
+  }
 
   const timeSlots = [
     "09:00 AM",
@@ -90,14 +84,15 @@ export default function BookServicePage() {
     "06:00 PM",
   ];
 
-  const total = cartList?.data?.items.reduce(
-    (sum, item) => sum + Number(item.service?.price || 0),
-    0
-  );
+  const total = cart.reduce((sum, s) => sum + Number(s.price), 0);
 
   const handleConfirm = () => {
     if (!selectedDate || !selectedSlot) {
       message.error("Please select date and slot");
+      return;
+    }
+    if (!cart.length) {
+      message.error("Please select at least one service");
       return;
     }
     if (!selectedDate || !selectedTime) {
@@ -105,19 +100,14 @@ export default function BookServicePage() {
       return;
     }
 
-    const subtotal = cartList?.data?.items.reduce(
-      (sum, item) => sum + Number(item.service?.price || 0),
-      0
-    );
-
+    const subtotal = cart.reduce((sum, s) => sum + Number(s.price), 0);
     const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
     const platformFee = 50;
-    const final_total =
-      subtotal - discount + platformFee + (selectedSlot?.fee || 0);
+    const total = subtotal - discount + platformFee + selectedSlot.fee;
 
     const bookingData = {
-      shop: cartList?.data?.vendor?.business_name,
-      services: cartList?.data?.items,
+      shop: shop.name,
+      services: cart,
       date: selectedDate,
       time: selectedTime,
       slot: selectedSlot.time,
@@ -126,7 +116,7 @@ export default function BookServicePage() {
       subtotal,
       discount,
       platformFee,
-      final_total,
+      total,
       appointmentId: Math.floor(Math.random() * 1000000),
     };
 
@@ -135,16 +125,8 @@ export default function BookServicePage() {
     setConfirmationOpen(true);
   };
 
-  const removeItem = async (id) => {
-    console.log(id);
-    await removeCartList(id)
-      .unwrap()
-      .then(() => {
-        toast.success("Item removed succesfully!");
-      })
-      .catch(() => {
-        toast.error("Failed to remove items!");
-      });
+  const removeItem = (indexToRemove) => {
+    setCart((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   return (
@@ -153,99 +135,95 @@ export default function BookServicePage() {
         <button onClick={() => navigate(-1)} className="mb-4 text-[#EE4E34]">
           &larr; Back
         </button>
-
+        <h1 className="text-2xl font-bold mb-5 text-black">
+          Select Your Services
+        </h1>
         <div className="flex flex-col md:flex-row gap-4 max-w-7xl mx-auto p-6">
-          <div className="bg-white w-full rounded-2xl shadow p-6 sticky top-6 min-h-[500px] flex flex-col">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-2 text-[#EE4E34] tracking-tight">
-              Your Booking Cart
-            </h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-md">
-              Review your selected services below before proceeding to book.
-            </p>
-
-            <div className="flex-1 h-[350px] overflow-y-auto">
-              {cartList?.data?.items?.length === 0 ? (
-                <div className="h-[450px] flex flex-col justify-center items-center text-center px-6">
-                  <Empty
-                    description={
-                      <span className="text-gray-500 text-lg max-w-xs">
-                        Your cart is currently empty. Start adding services to
-                        see them here!
-                      </span>
-                    }
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1 bg-white rounded-2xl p-4"
+            style={{ maxHeight: "600px", overflowY: "auto" }}
+          >
+            {shopServices?.map((service, i) => (
+              <div
+                key={service.id}
+                style={{ maxHeight: "400px", overflowY: "auto" }}
+                className="border p-4 rounded-md flex flex-col "
+              >
+                <h2 className="font-bold text-sm text-[#EE4E34] mb-2">
+                  {service.name}
+                </h2>
+                {service?.image ? (
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    className="w-full h-36 object-cover rounded mb-2"
                   />
-                  <button
-                    onClick={() => navigate(-1)}
-                    className="mt-6 px-4 py-2 bg-[#EE4E34] text-white text-[14px] rounded-md font-semibold hover:bg-[#d9432a] transition"
-                  >
-                    Browse Services
-                  </button>
+                ) : (
+                  <div className="w-full h-36 flex items-center justify-center bg-gray-100 rounded mb-2 text-gray-500 text-xs font-semibold">
+                    No Image Available
+                  </div>
+                )}
+
+                <p className="text-gray-700 mb-2 text-xs md:text-sm ">
+                  {service.description}
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-2 text-xs md:text-sm text-gray-600">
+                  <span>Gender: {service.gender || "Any"}</span>
+                  <span>Duration: {service.duration} mins</span>
+                  <span>Price: ₹{service.price}</span>
+                </div>
+
+                <Button
+                  type="primary"
+                  block
+                  onClick={() => {
+                    if (!cart.some((s) => s.id === service.id)) {
+                      setCart([...cart, service]);
+                      message.success(`${service.name} added to cart!`);
+                    } else {
+                      message.info(`${service.name} is already in your cart.`);
+                    }
+                  }}
+                  className="bg-[#EE4E34] border-[#EE4E34]"
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            ))}
+
+            {shopServices?.length === 0 && (
+              <Empty description="No services available" />
+            )}
+          </div>
+
+          <div className="bg-white rounded-2xl shadow p-6 sticky top-6 min-h-[500px] min-w-[320px] flex flex-col">
+            <h2 className="text-lg font-semibold mb-4 text-[#EE4E34]">
+              Selected Services
+            </h2>
+            <div className="flex-1 h-[350px] overflow-y-auto">
+              {cart.length === 0 ? (
+                <div className="h-full flex justify-center items-center">
+                  <Empty description="No services selected" />
                 </div>
               ) : (
-                <ul className="space-y-4 scrollbar-none">
-                  {cartList?.data?.items.map((item, i) => (
+                <ul className="space-y-3 scrollbar-none">
+                  {cart.map((item, i) => (
                     <li
                       key={i}
-                      className="flex flex-col md:flex-row gap-4 border rounded-xl p-4 bg-gray-50 shadow-sm hover:shadow-md transition"
+                      className="flex justify-between items-center border-b pb-2"
                     >
-                      {/* Service Image */}
-                      <img
-                        src={item?.service?.image}
-                        alt={item?.service?.name}
-                        className="w-20 h-20 object-cover rounded-lg border"
-                      />
-
-                      {/* Service Details */}
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-semibold text-[#EE4E34]">
-                            {item?.service?.name}
-                          </h3>
-                          <Button
-                            type="text"
-                            icon={<BsTrash2 size={18} />}
-                            onClick={() => removeItem(item.cart_id)}
-                            className="text-red-600 hover:text-red-800"
-                          />
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                          {item?.service?.description}
-                        </p>
-
-                        {/* Vendor Info */}
-                        <div className="mt-2 text-xs text-gray-500">
-                          <span className="font-medium">Vendor:</span>{" "}
-                          {item?.service?.vendor?.business_name}
-                          <span className="ml-2">
-                            ({item?.service?.vendor?.years_of_experience} yrs
-                            exp.)
-                          </span>
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex justify-between items-center mt-4">
-                          {item?.service?.discount_price ? (
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-400 line-through">
-                                ₹{item?.service?.price}
-                              </span>
-                              <span className="text-[#EE4E34] font-semibold">
-                                ₹{item?.service?.discount_price}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-[#EE4E34] font-semibold">
-                              ₹{item?.service?.price}
-                            </span>
-                          )}
-
-                          <span className="text-xs text-gray-400">
-                            Added on{" "}
-                            {new Date(item.added_date).toLocaleDateString()}
-                          </span>
-                        </div>
+                      <span className="text-gray-700">{item.name}</span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-[#EE4E34] font-semibold">
+                          ₹{item.price}
+                        </span>
+                        <Button
+                          type="text"
+                          icon={<BsTrash2 size={18} />}
+                          onClick={() => removeItem(i)}
+                          className="text-red-600 hover:text-red-800"
+                        />
                       </div>
                     </li>
                   ))}
@@ -255,15 +233,14 @@ export default function BookServicePage() {
 
             <div className="border-t pt-4 mt-4">
               <div className="flex justify-between font-bold text-sm mb-3">
-                <span className="text-[#EE4E34]">Total</span>
+                <span className="text-purple-600">Total</span>
                 <span className="text-[#EE4E34]">₹{total}</span>
               </div>
-
               <Button
                 type="primary"
                 block
                 size="large"
-                disabled={!cartList?.data?.items?.length}
+                disabled={!cart.length}
                 className="bg-[#EE4E34] border-[#EE4E34] font-semibold"
                 onClick={() => setModalOpen(true)}
               >
@@ -284,7 +261,7 @@ export default function BookServicePage() {
           <Button
             key="confirm"
             type="primary"
-            style={{ backgroundColor: "#EE4E34", borderColor: "#EE4E34" }}
+            style={{ backgroundColor: "#722ed1", borderColor: "#722ed1" }}
             onClick={handleConfirm}
           >
             Proceed to Booking
@@ -298,13 +275,11 @@ export default function BookServicePage() {
         <h3 className="font-semibold mb-2">Selected Services</h3>
         <List
           bordered
-          dataSource={cartList?.data?.items}
+          dataSource={cart}
           renderItem={(item) => (
             <List.Item className="flex justify-between">
-              <span>{item?.service?.name}</span>
-              <span className="text-[#EE4E34] font-medium">
-                ₹{item?.service?.price}
-              </span>
+              <span>{item.desc}</span>
+              <span className="text-[#EE4E34] font-medium">₹{item.price}</span>
             </List.Item>
           )}
           className="mb-4"
@@ -446,10 +421,7 @@ export default function BookServicePage() {
         {/* Bill Summary */}
         <h3 className="font-semibold mb-2">Bill Summary</h3>
         {(() => {
-          const subtotal = cartList?.data?.items.reduce(
-            (sum, s) => sum + Number(s?.service?.price),
-            0
-          );
+          const subtotal = cart.reduce((sum, s) => sum + Number(s.price), 0);
           const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0; // Example 10% discount
           const platformFee = 50; // Fixed platform fee
           const slot = 0 || selectedSlot.fee;
@@ -492,10 +464,9 @@ export default function BookServicePage() {
             type="primary"
             style={{ backgroundColor: "#EE4E34", borderColor: "#EE4E34" }}
             onClick={() => {
-              console.log(confirmedBooking);
               setConfirmationOpen(false);
               // redirect to payment gateway page (replace '/payment-gateway' with your route)
-              // navigate("/payment-gateway", { state: confirmedBooking });
+              navigate("/payment-gateway", { state: confirmedBooking });
             }}
           >
             Confirm & Pay
@@ -538,12 +509,13 @@ export default function BookServicePage() {
         </div>
 
         {/* Salon Details */}
-        {/* <div className="mb-4">
+        <div className="mb-4">
           <h3 className="font-bold mb-1">Salon Details</h3>
           <p className="font-semibold">
             {shopData.business_name}, {shopData.address}
           </p>
-        </div> */}
+          {/* Add support info, timings, directions, buttons as needed */}
+        </div>
 
         {/* Appointment Details */}
         <div className="mb-4">

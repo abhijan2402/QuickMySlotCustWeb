@@ -5,6 +5,10 @@ import { profileApi } from "../services/profileApi";
 import { categoryApi } from "../services/categoryApi";
 import { supportApi } from "../services/supportApi";
 import { vendorApi } from "../services/vendorApi";
+import { wishiListApi } from "../services/wishListApi";
+import { analyticsApi } from "../services/analyticsApi";
+import { faqApi } from "../services/faqApi";
+import { walletApi } from "../services/walletApi";
 
 const store = configureStore({
   reducer: {
@@ -13,6 +17,10 @@ const store = configureStore({
     [categoryApi.reducerPath]: categoryApi.reducer,
     [supportApi.reducerPath]: supportApi.reducer,
     [vendorApi.reducerPath]: vendorApi.reducer,
+    [wishiListApi.reducerPath]: wishiListApi.reducer,
+    [analyticsApi.reducerPath]: analyticsApi.reducer,
+    [faqApi.reducerPath]: faqApi.reducer,
+    [walletApi.reducerPath]: walletApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -21,7 +29,11 @@ const store = configureStore({
       supportApi.middleware,
       profileApi.middleware,
       vendorApi.middleware,
-      categoryApi.middleware
+      wishiListApi.middleware,
+      categoryApi.middleware,
+      walletApi.middleware,
+      analyticsApi.middleware,
+      faqApi.middleware
     ),
 });
 

@@ -19,6 +19,7 @@ import OffersList from "../pages/OffersList";
 import PricingModal from "../pages/PricingModal";
 import ProtectedRoute from "./ProtectedRoute";
 import Signup from "../pages/Auth/SignUp";
+import ServicesList from "../components/ShopServices/ServicesList";
 
 export default function AppRoutes() {
   return (
@@ -38,7 +39,11 @@ export default function AppRoutes() {
         <Route path="/services/:id" element={<ServicesPage />} />
         <Route path="/services/:type/:shopId" element={<ServiceDetailPage />} />
         <Route
-          path="/book-service/:type/:shopId/:serviceId"
+          path="/book-servicelist/:type/:shopId/:serviceId"
+          element={<ServicesList />}
+        />
+        <Route
+          path="/cart"
           element={<BookServicePage />}
         />
         <Route path="/appointments" element={<Appointments />} />

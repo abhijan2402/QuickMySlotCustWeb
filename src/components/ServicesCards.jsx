@@ -29,7 +29,7 @@ export default function ServicesCards() {
 
         {/* Loader (Skeleton Cards) */}
         {isLoading ? (
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
@@ -44,7 +44,7 @@ export default function ServicesCards() {
             ))}
           </div>
         ) : (
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
             {data?.data?.map((item, index) => (
               <motion.div
                 key={item.id}

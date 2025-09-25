@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { salondata } from "../../utils/slaondata";
 import { MdMap } from "react-icons/md";
-import { BsPhoneFill } from "react-icons/bs";
+import { BsFillHeartFill, BsPhoneFill } from "react-icons/bs";
 import { BiHeart } from "react-icons/bi";
 import { Tooltip } from "antd";
 import { useState } from "react";
@@ -12,17 +12,22 @@ import RateReviewModal from "../Modals/RateReviewModal";
 import {
   useGetvendorPromoCodeQuery,
   useGetvendorQuery,
+  useAddToWishMutation,
+  useRemoveWishListMutation,
 } from "../../services/vendorApi";
 import { useGetcategoryQuery } from "../../services/categoryApi";
 import NoDataAvailable from "../../pages/NoDataAvailable";
 import CardCarouselLoader from "../CardCarouselLoader";
 import SpinnerLodar from "../SpinnerLodar";
 import { div } from "framer-motion/m";
+import { toast } from "react-toastify";
 
 export default function ServiceDetailPage() {
   const { shopId, type } = useParams();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [addToWish] = useAddToWishMutation();
+  const [removeWishList] = useRemoveWishListMutation();
 
   const { data: category, isLoading: catLoading } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
@@ -66,6 +71,32 @@ export default function ServiceDetailPage() {
     );
   }
 
+  const handleWishList = async (id) => {
+    const fd = new FormData();
+    fd.append("vendorId", id);
+    await addToWish(fd)
+      .unwrap()
+      .then(() => {
+        toast.success("Shop Added to Favourite");
+      })
+      .catch(() => {
+        toast.error("Failed to Add as Favourite.");
+      });
+  };
+
+  const handleRemoveWishList = async (id) => {
+    const fd = new FormData();
+    fd.append("service_id", id);
+    await removeWishList(id)
+      .unwrap()
+      .then(() => {
+        toast.success("Removed from Favourite");
+      })
+      .catch(() => {
+        toast.error("Failed to Remove Favourite.");
+      });
+  };
+
   return (
     <>
       <section className="max-w-7xl mx-auto p-6">
@@ -87,8 +118,24 @@ export default function ServiceDetailPage() {
                   {shopData?.business_name || "NA"}
                 </h1>
                 <Tooltip title="Add to Favourite">
-                  <button className="bg-[#EE4E34] flex items-center rounded-full p-2 text-xl">
-                    <BiHeart />
+                  <button
+                    className={`flex items-center rounded-full p-2 text-xl
+      ${
+        shopData?.wishlist_status === 1
+          ? "text-red-500 border border-orange-700"
+          : "text-orange-700 border border-orange-700"
+      }`}
+                    onClick={() =>
+                      shopData?.wishlist_status === 1
+                        ? handleRemoveWishList(shopData?.id)
+                        : handleWishList(shopData?.id)
+                    }
+                  >
+                    {shopData?.wishlist_status === 1 ? (
+                      <BsFillHeartFill className="text-red-500" />
+                    ) : (
+                      <BiHeart className="text-orange-700" />
+                    )}
                   </button>
                 </Tooltip>
               </div>
@@ -153,7 +200,7 @@ export default function ServiceDetailPage() {
                         key={i}
                         onClick={() =>
                           navigate(
-                            `/book-service/${categoryData?.name}/${shopData?.id}/${service.id}`
+                            `/book-servicelist/${categoryData?.name}/${shopData?.id}/${service.id}`
                           )
                         }
                         className="cursor-pointer bg-white border rounded-xl p-4 shadow-sm 

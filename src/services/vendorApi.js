@@ -18,6 +18,14 @@ export const vendorApi = createApi({
       }),
       providesTags: ["vendor"],
     }),
+    // Get services by sub-services (GET request)
+    getServices: builder.query({
+      query: ({ id }) => ({
+        url: `customer/sub-category/${id}`,
+        method: "POST",
+      }),
+      providesTags: ["vendor"],
+    }),
     // Get vendor (GET request)
     getvendorPromoCode: builder.query({
       query: (id) => ({
@@ -26,7 +34,71 @@ export const vendorApi = createApi({
       }),
       providesTags: ["vendor"],
     }),
+
+    // Wish List
+    getWishList: builder.query({
+      query: (id) => ({
+        url: `customer/wishlist`,
+        method: "GET",
+      }),
+      providesTags: ["Wish"],
+    }),
+    // Add to Wish
+    addToWish: builder.mutation({
+      query: (fd) => ({
+        url: `customer/wishlist-add`,
+        method: "POST",
+        body: fd,
+      }),
+      invalidatesTags: ["Wish", "vendor"],
+    }),
+    // Delete Wish Item
+    removeWishList: builder.mutation({
+      query: (id) => ({
+        url: `customer/wishlist-remove/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["Wish", "vendor"],
+    }),
+
+    // Cart List
+    getCartList: builder.query({
+      query: (id) => ({
+        url: `customer/cart`,
+        method: "GET",
+      }),
+      providesTags: ["cart"],
+    }),
+    // Add to Cart
+    addToCart: builder.mutation({
+      query: (fd) => ({
+        url: "customer/cart/add",
+        method: "POST",
+        body: fd,
+      }),
+      invalidatesTags: ["cart"],
+    }),
+    // Delete Cart Item
+    removeCartList: builder.mutation({
+      query: (id) => ({
+        url: `customer/cart-remove/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["cart"],
+    }),
   }),
 });
 
-export const { useGetvendorQuery, useGetvendorPromoCodeQuery } = vendorApi;
+export const {
+  useGetvendorQuery,
+  useGetvendorPromoCodeQuery,
+  useAddToCartMutation,
+  useGetCartListQuery,
+  useGetServicesQuery,
+  useRemoveCartListMutation,
+  useAddToWishMutation,
+  useGetWishListQuery,
+  useRemoveWishListMutation,
+} = vendorApi;
