@@ -104,7 +104,7 @@ export default function Navbar() {
 
           {/* Left Part: Wishlist, Location, User Profile */}
           {!isMinimalPage && (
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => navigate("/notifications")}
                 className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
@@ -117,6 +117,18 @@ export default function Navbar() {
                     <BsBellFill className="text-sm text-white" />
                   </span>
                 </div>
+              </button>
+              <button
+                onClick={() => navigate("/profile")}
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
+              >
+                {" "}
+                <div
+                  className="w-6 h-6 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold"
+                  title="Profile"
+                >
+                  {user.name?.charAt(0)?.toUpperCase() || "-"}{" "}
+                </div>{" "}
               </button>
               <button
                 onClick={() => navigate("/cart")}

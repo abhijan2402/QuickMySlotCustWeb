@@ -5,6 +5,7 @@ import { useState } from "react";
 import Wallet from "./Wallet";
 import FAQ from "./FAQ";
 import Analytics from "./Analytics";
+import MyFavourite from "./MyFavourite";
 
 const DashboardTabs = () => {
   const [accounts, setAccounts] = useState([
@@ -20,30 +21,6 @@ const DashboardTabs = () => {
     { id: 2, type: "Debit", amount: 300, date: "2025-08-22" },
   ]);
   const [walletTotal, setWalletTotal] = useState(1200);
-  const [transactions, setTransactions] = useState([
-    {
-      id: "tx1",
-      amount: 2300,
-      date: "2025-07-15",
-      type: "credit",
-      userName: "Amit Sharma",
-      phone: "+91-9876543210",
-      account: "1234567890",
-      email: "amit.sharma@email.com",
-      // note: "Salary deposit",
-    },
-    {
-      id: "tx2",
-      amount: 500,
-      date: "2025-08-05",
-      type: "credit",
-      userName: "Priya Singh",
-      phone: "+91-9812345678",
-      account: "9876543210",
-      email: "priya.singh@email.com",
-      // note: "Mobile recharge",
-    },
-  ]);
 
   const setDefaultAccount = (id) => {
     const updated = accounts.map((acc) => ({
@@ -81,6 +58,11 @@ const DashboardTabs = () => {
         <Analytics />
       </TabPane>
 
+      {/* Existing My Favourite Tab */}
+      <TabPane tab="My Favourite" key="favourite">
+        <MyFavourite />
+      </TabPane>
+
       {/* Wallet Tab */}
       <TabPane tab="Wallet" key="wallet">
         <Wallet
@@ -89,10 +71,6 @@ const DashboardTabs = () => {
           addAmount={addAmount}
         />
       </TabPane>
-
-   
-
-   
 
       {/* FAQ Tab */}
       <TabPane tab="FAQ" key="faq">

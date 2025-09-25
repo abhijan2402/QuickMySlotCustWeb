@@ -9,6 +9,7 @@ import { wishiListApi } from "../services/wishListApi";
 import { analyticsApi } from "../services/analyticsApi";
 import { faqApi } from "../services/faqApi";
 import { walletApi } from "../services/walletApi";
+import { notificationApi } from "../services/notificationApi";
 
 const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ const store = configureStore({
     [analyticsApi.reducerPath]: analyticsApi.reducer,
     [faqApi.reducerPath]: faqApi.reducer,
     [walletApi.reducerPath]: walletApi.reducer,
+    [notificationApi.reducerPath]: notificationApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -33,7 +35,8 @@ const store = configureStore({
       categoryApi.middleware,
       walletApi.middleware,
       analyticsApi.middleware,
-      faqApi.middleware
+      faqApi.middleware,
+      notificationApi.middleware
     ),
 });
 

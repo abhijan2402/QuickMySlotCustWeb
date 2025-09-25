@@ -18,6 +18,13 @@ export const vendorApi = createApi({
       }),
       providesTags: ["vendor"],
     }),
+    getSlotsShedule: builder.query({
+      query: (id) => ({
+        url: `customer/services/${id}/available-slots`,
+        method: "GET",
+      }),
+      providesTags: ["abc"],
+    }),
     // Get services by sub-services (GET request)
     getServices: builder.query({
       query: ({ id }) => ({

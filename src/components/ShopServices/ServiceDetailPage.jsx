@@ -27,7 +27,6 @@ export default function ServiceDetailPage() {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [addToWish] = useAddToWishMutation();
-  const [removeWishList] = useRemoveWishListMutation();
 
   const { data: category, isLoading: catLoading } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
@@ -84,19 +83,6 @@ export default function ServiceDetailPage() {
       });
   };
 
-  const handleRemoveWishList = async (id) => {
-    const fd = new FormData();
-    fd.append("service_id", id);
-    await removeWishList(id)
-      .unwrap()
-      .then(() => {
-        toast.success("Removed from Favourite");
-      })
-      .catch(() => {
-        toast.error("Failed to Remove Favourite.");
-      });
-  };
-
   return (
     <>
       <section className="max-w-7xl mx-auto p-6">
@@ -125,11 +111,7 @@ export default function ServiceDetailPage() {
           ? "text-red-500 border border-orange-700"
           : "text-orange-700 border border-orange-700"
       }`}
-                    onClick={() =>
-                      shopData?.wishlist_status === 1
-                        ? handleRemoveWishList(shopData?.id)
-                        : handleWishList(shopData?.id)
-                    }
+                    onClick={() => handleWishList(shopData?.id)}
                   >
                     {shopData?.wishlist_status === 1 ? (
                       <BsFillHeartFill className="text-red-500" />

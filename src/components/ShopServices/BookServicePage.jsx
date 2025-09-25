@@ -19,6 +19,7 @@ import {
   useRemoveCartListMutation,
 } from "../../services/vendorApi";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -29,19 +30,20 @@ const slotOptions = {
     { time: "02:30 - 02:45 pm", fillingSoon: true },
   ],
   scheduled: [
-    { time: "04:30 - 04:45 pm" },
-    { time: "05:00 - 05:15 pm" },
-    { time: "05:30 - 05:45 pm" },
-    { time: "06:00 - 06:15 pm", fee: 50 },
-    { time: "06:30 - 06:45 pm", fee: 50 },
-    { time: "07:00 - 07:15 pm", fee: 100 },
-    { time: "07:30 - 07:45 pm", fee: 100 },
-    { time: "08:00 - 08:15 pm", fee: 100 },
+    { time: "04:30 pm" },
+    { time: "05:00 pm" },
+    { time: "05:30 pm" },
+    { time: "06:00 pm", fee: 50 },
+    { time: "06:30 pm", fee: 50 },
+    { time: "07:00 pm", fee: 100 },
+    { time: "07:30 pm", fee: 100 },
+    { time: "08:00 pm", fee: 100 },
   ],
 };
 
 export default function BookServicePage() {
   const { shopId, type, serviceId } = useParams();
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const [removeCartList] = useRemoveCartListMutation();
   const { data: cartList } = useGetCartListQuery();
@@ -64,7 +66,11 @@ export default function BookServicePage() {
   const [note, setNote] = useState("");
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
-  const [selectedSlot, setSelectedSlot] = useState({ time: "", fee: 0 });
+  const [selectedSlots, setSelectedSlots] = useState([]);
+
+  const [cartItem, setCartItem] = useState(null);
+
+  console.log(selectedSlots);
 
   // if (!shopServices) {
   //   return (
@@ -95,44 +101,66 @@ export default function BookServicePage() {
     0
   );
 
-  const handleConfirm = () => {
-    if (!selectedDate || !selectedSlot) {
-      message.error("Please select date and slot");
-      return;
-    }
-    if (!selectedDate || !selectedTime) {
-      message.error("Please select date and time");
-      return;
-    }
+  const handleSlotClick = (slot) => {
+    const isSelected = selectedSlots.find((s) => s.time === slot.time);
 
-    const subtotal = cartList?.data?.items.reduce(
-      (sum, item) => sum + Number(item.service?.price || 0),
+    if (isSelected) {
+      // Deselect the slot
+      setSelectedSlots(selectedSlots.filter((s) => s.time !== slot.time));
+    } else {
+      // Select slot only if less than 3 are selected
+      if (selectedSlots.length < 3) {
+        setSelectedSlots([...selectedSlots, slot]);
+      } else {
+        alert("You can select up to 3 slots only.");
+      }
+    }
+  };
+
+  const bookService = (item) => {
+    setCartItem(item);
+    setModalOpen(true);
+  };
+
+  console.log(cartItem);
+
+  const handleConfirm = () => {
+    // Sum up all service prices in cart
+    const subtotal = cartItem?.item_price;
+
+    const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
+    const platform_fee = 50;
+
+    // Sum of selected slot fees
+    const slotFees = selectedSlots?.reduce(
+      (sum, slot) => sum + (slot.fee || 0),
       0
     );
 
-    const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
-    const platformFee = 50;
-    const final_total =
-      subtotal - discount + platformFee + (selectedSlot?.fee || 0);
+    // Total amount including slot fees
+    const amount = subtotal - discount + platform_fee + slotFees;
 
     const bookingData = {
-      shop: cartList?.data?.vendor?.business_name,
-      services: cartList?.data?.items,
+      customer_id: user?.id,
+      vendor_id: cartItem?.service?.vendor?.id,
+      services: cartItem?.service?.id,
+      amount,
+      platform_fee,
+      status: "pending",
+      tax: "5",
       date: selectedDate,
-      time: selectedTime,
-      slot: selectedSlot.time,
-      appliedOffer: appliedOffer || "None",
+      slots: selectedSlots.map((slot) => slot.time), // include selected slot times
       note,
-      subtotal,
-      discount,
-      platformFee,
-      final_total,
-      appointmentId: Math.floor(Math.random() * 1000000),
     };
 
     setConfirmedBooking(bookingData);
     setModalOpen(false);
     setConfirmationOpen(true);
+  };
+
+  const handleConfirmBooking = () => {
+    console.log(confirmedBooking);
+    // setConfirmationOpen(false);
   };
 
   const removeItem = async (id) => {
@@ -201,12 +229,21 @@ export default function BookServicePage() {
                           <h3 className="text-lg font-semibold text-[#EE4E34]">
                             {item?.service?.name}
                           </h3>
-                          <Button
-                            type="text"
-                            icon={<BsTrash2 size={18} />}
-                            onClick={() => removeItem(item.cart_id)}
-                            className="text-red-600 hover:text-red-800"
-                          />
+                          <div className="flex gap-2">
+                            <Button
+                              type="text"
+                              icon={<BsTrash2 size={18} />}
+                              onClick={() => removeItem(item.cart_id)}
+                              className="text-red-600 hover:text-red-800"
+                            />
+                            <button
+                              size="small"
+                              className="bg-[#EE4E34] hover:bg-[#EE4E34] text-sm rounded-md px-4 border-[#EE4E34] font-semibold"
+                              onClick={() => bookService(item)}
+                            >
+                              Book Now
+                            </button>
+                          </div>
                         </div>
 
                         {/* Description */}
@@ -253,7 +290,7 @@ export default function BookServicePage() {
               )}
             </div>
 
-            <div className="border-t pt-4 mt-4">
+            {/* <div className="border-t pt-4 mt-4">
               <div className="flex justify-between font-bold text-sm mb-3">
                 <span className="text-[#EE4E34]">Total</span>
                 <span className="text-[#EE4E34]">₹{total}</span>
@@ -269,7 +306,7 @@ export default function BookServicePage() {
               >
                 Book Now
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -295,24 +332,21 @@ export default function BookServicePage() {
         width={600}
       >
         {/* Services List */}
-        <h3 className="font-semibold mb-2">Selected Services</h3>
-        <List
-          bordered
-          dataSource={cartList?.data?.items}
-          renderItem={(item) => (
-            <List.Item className="flex justify-between">
-              <span>{item?.service?.name}</span>
-              <span className="text-[#EE4E34] font-medium">
-                ₹{item?.service?.price}
-              </span>
-            </List.Item>
-          )}
-          className="mb-4"
-        />
+        <h3 className="font-semibold mb-0">Selected Services</h3>
+        <div className="p-2 bg-orange-50 rounded-sm mb-6">
+          <p className="flex justify-between">
+            <span className="text-orange-600 font-medium">
+              {cartItem?.service?.name}
+            </span>
+            <span className="text-orange-600 font-medium">
+              {cartItem?.item_price}
+            </span>
+          </p>
+        </div>
 
         {/* Date & Time */}
-        <h3 className="font-semibold mb-2">Choose Date & Time</h3>
-        <div className="flex gap-4 mb-4 flex-col sm:flex-row">
+        {/* <h3 className="font-semibold mb-2">Choose Date & Time</h3>
+        <div className="flex gap-4 mb-4 flex-row sm:flex-row">
           <DatePicker
             onChange={(_, dateString) => setSelectedDate(dateString)}
             placeholder="Select Date"
@@ -329,7 +363,7 @@ export default function BookServicePage() {
               </Option>
             ))}
           </Select>
-        </div>
+        </div> */}
 
         {/* Date & Slot Selection */}
         <h3 className="font-semibold mb-2">Choose Date & Slot</h3>
@@ -340,39 +374,6 @@ export default function BookServicePage() {
         />
         <div className="flex mt-4 flex-col sm:flex-row gap-4 mb-4">
           <div className="flex-1 min-w-[170px]">
-            {/* Fast Booking */}
-            <div>
-              <div className="flex items-center gap-2 font-semibold mb-1">
-                <span>⚡ Fast Booking</span>
-                <span className="text-orange-500 text-xs font-semibold">
-                  🔥 filling soon
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {slotOptions.fast.map((slot, idx) => (
-                  <button
-                    key={slot.time}
-                    className={`rounded flex items-center px-3 py-2 border text-xs
-              ${
-                selectedSlot === slot.time
-                  ? "border-purple-600 bg-purple-50"
-                  : "border-gray-300 bg-white"
-              }
-            `}
-                    onClick={() => setSelectedSlot(slot)}
-                  >
-                    <span>{slot.time}</span>
-                    {slot.fillingSoon && (
-                      <span className="ml-2 text-orange-500 font-semibold">
-                        🔥
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Scheduled Slots */}
             <div>
               <div className="flex items-center gap-2 font-semibold mt-4 mb-1">
                 <span>⏰ Scheduled Slots</span>
@@ -381,33 +382,54 @@ export default function BookServicePage() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-2 mb-2">
-                {slotOptions.scheduled.map((slot, idx) => (
-                  <button
-                    key={slot.time}
-                    className={`rounded flex items-center px-3 py-2 border text-xs
-              ${
-                selectedSlot.time === slot.time
-                  ? "border-purple-600 bg-purple-50"
-                  : "border-gray-300 bg-white"
-              }
-            `}
-                    onClick={() => setSelectedSlot(slot)}
-                  >
-                    <span>{slot.time}</span>
-                    {slot.fee && (
-                      <span className="ml-2 text-orange-600 font-semibold">
-                        + ₹{slot.fee}
-                      </span>
-                    )}
-                    {slot.fillingSoon && (
-                      <span className="ml-2 text-orange-500 font-semibold">
-                        🔥
-                      </span>
-                    )}
-                  </button>
-                ))}
+                {slotOptions.scheduled.map((slot) => {
+                  const isSelected = selectedSlots.find(
+                    (s) => s.time === slot.time
+                  );
+                  return (
+                    <button
+                      key={slot.time}
+                      className={`rounded flex items-center px-3 py-2 border text-xs
+                    ${
+                      isSelected
+                        ? "border-purple-600 bg-purple-50"
+                        : "border-gray-300 bg-white"
+                    }
+                  `}
+                      onClick={() => handleSlotClick(slot)}
+                    >
+                      <span>{slot.time}</span>
+                      {slot.fee && (
+                        <span className="ml-2 text-orange-600 font-semibold">
+                          + ₹{slot.fee}
+                        </span>
+                      )}
+                      {slot.fillingSoon && (
+                        <span className="ml-2 text-orange-500 font-semibold">
+                          🔥
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
+
+              {selectedSlots.length < 1 && (
+                <p className="text-red-500 text-xs">
+                  Please select at least 1 slot.
+                </p>
+              )}
             </div>
+          </div>
+
+          {/* Optional: Show selected slots */}
+          <div className="flex flex-col gap-2">
+            <h4 className="font-semibold text-gray-700">Selected Slots:</h4>
+            {selectedSlots.map((s) => (
+              <span key={s.time} className="text-sm text-gray-600">
+                {s.time} {s.fee ? `(+₹${s.fee})` : ""}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -446,14 +468,19 @@ export default function BookServicePage() {
         {/* Bill Summary */}
         <h3 className="font-semibold mb-2">Bill Summary</h3>
         {(() => {
-          const subtotal = cartList?.data?.items.reduce(
-            (sum, s) => sum + Number(s?.service?.price),
+          const subtotal = Number(cartItem?.item_price) || 0;
+          const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
+          const platformFee = 50;
+          // const slot = selectedSlot?.fee || 0;
+          // Sum of selected slot fees
+          const slotFees = selectedSlots?.reduce(
+            (sum, slot) => sum + (slot.fee || 0),
             0
           );
-          const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0; // Example 10% discount
-          const platformFee = 50; // Fixed platform fee
-          const slot = 0 || selectedSlot.fee;
-          const grandTotal = subtotal - discount + platformFee + slot;
+
+          const grandTotal = subtotal - discount + platformFee + slotFees;
+
+          // console.log(subtotal, discount, slot, grandTotal);
 
           return (
             <div className="space-y-2 text-base">
@@ -491,12 +518,7 @@ export default function BookServicePage() {
             key="confirm"
             type="primary"
             style={{ backgroundColor: "#EE4E34", borderColor: "#EE4E34" }}
-            onClick={() => {
-              console.log(confirmedBooking);
-              setConfirmationOpen(false);
-              // redirect to payment gateway page (replace '/payment-gateway' with your route)
-              // navigate("/payment-gateway", { state: confirmedBooking });
-            }}
+            onClick={handleConfirmBooking}
           >
             Confirm & Pay
           </Button>,
