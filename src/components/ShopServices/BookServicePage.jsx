@@ -149,6 +149,7 @@ export default function BookServicePage() {
 
     formData.append("customer_id", confirmedBooking.customer_id);
     formData.append("amount", confirmedBooking.amount);
+    formData.append("note", confirmedBooking.note);
     formData.append("vendor_id", confirmedBooking.vendor_id);
     formData.append("service_id", confirmedBooking.services);
     formData.append("platform_fee", confirmedBooking.platform_fee);
