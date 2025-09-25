@@ -11,6 +11,7 @@ import { faqApi } from "../services/faqApi";
 import { walletApi } from "../services/walletApi";
 import { notificationApi } from "../services/notificationApi";
 import { paymentApi } from "../services/paymentApi";
+import { offerApi } from "../services/offersApi";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     [wishiListApi.reducerPath]: wishiListApi.reducer,
     [analyticsApi.reducerPath]: analyticsApi.reducer,
     [faqApi.reducerPath]: faqApi.reducer,
+    [offerApi.reducerPath]: offerApi.reducer,
     [walletApi.reducerPath]: walletApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
@@ -39,6 +41,7 @@ const store = configureStore({
       analyticsApi.middleware,
       faqApi.middleware,
       paymentApi.middleware,
+      offerApi.middleware,
       notificationApi.middleware
     ),
 });

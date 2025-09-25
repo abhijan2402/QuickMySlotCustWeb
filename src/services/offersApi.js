@@ -18,6 +18,14 @@ export const offerApi = createApi({
       }),
       providesTags: ["offer"],
     }),
+    // Get Higlghted offer (GET request)
+    getHiglightedOffer: builder.query({
+      query: () => ({
+        url: `customer/promo-codes/highlighted`,
+        method: "GET",
+      }),
+      providesTags: ["offer"],
+    }),
     addoffer: builder.mutation({
       query: (formData) => ({
         url: `promo-codes`,
@@ -51,4 +59,5 @@ export const {
   useAddofferMutation,
   useUpdateofferMutation,
   useDeleteofferMutation,
+  useGetHiglightedOfferQuery,
 } = offerApi;

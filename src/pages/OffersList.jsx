@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import Breadcrumb from "../components/Breadcrumb";
+import { useGetHiglightedOfferQuery } from "../services/offersApi";
 
 const offers = [
   {
@@ -40,6 +41,8 @@ const offers = [
 ];
 
 const OffersList = () => {
+  const { data } = useGetHiglightedOfferQuery();
+  console.log(data?.data);
   return (
     <>
       <div className="max-w-6xl mx-auto py-6 px-2">
