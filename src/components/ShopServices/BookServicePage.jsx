@@ -20,6 +20,10 @@ import {
 } from "../../services/vendorApi";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import {
+  useCreateOrderMutation,
+  useVerifyPaymentMutation,
+} from "../../services/paymentApi";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -46,17 +50,19 @@ export default function BookServicePage() {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const [removeCartList] = useRemoveCartListMutation();
-  const { data: cartList } = useGetCartListQuery();
+  const [createOrder] = useCreateOrderMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
+  const { data: cartList, refetch } = useGetCartListQuery();
   const { data: category } = useGetcategoryQuery();
-  const categoryData = category?.data?.find((cat) => cat.name === type);
+  const categoryData = category?.data?.data?.find((cat) => cat.name === type);
   const { data } = useGetvendorQuery(categoryData?.id);
-  const shopData = data?.data?.find((cat) => cat.id === Number(shopId));
+  const shopData = data?.data?.data?.find((cat) => cat.id === Number(shopId));
 
   const shopServices = shopData?.services?.filter(
     (s) => s.service_id === serviceId
   );
 
-  console.log(shopServices);
+  // console.log(shopServices);
 
   const [cart, setCart] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,37 +75,6 @@ export default function BookServicePage() {
   const [selectedSlots, setSelectedSlots] = useState([]);
 
   const [cartItem, setCartItem] = useState(null);
-
-  console.log(selectedSlots);
-
-  // if (!shopServices) {
-  //   return (
-  //     <div className="max-w-4xl mx-auto p-8 text-center">
-  //       <h2 className="text-2xl font-bold mb-4">Shop Not Found</h2>
-  //       <Button type="primary" onClick={() => navigate(-1)}>
-  //         Go Back
-  //       </Button>
-  //     </div>
-  //   );
-  // }
-
-  const timeSlots = [
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-    "05:00 PM",
-    "06:00 PM",
-  ];
-
-  const total = cartList?.data?.items.reduce(
-    (sum, item) => sum + Number(item.service?.price || 0),
-    0
-  );
 
   const handleSlotClick = (slot) => {
     const isSelected = selectedSlots.find((s) => s.time === slot.time);
@@ -122,7 +97,7 @@ export default function BookServicePage() {
     setModalOpen(true);
   };
 
-  console.log(cartItem);
+  // console.log(cartItem);
 
   const handleConfirm = () => {
     // Sum up all service prices in cart
@@ -140,6 +115,7 @@ export default function BookServicePage() {
     // Total amount including slot fees
     const amount = subtotal - discount + platform_fee + slotFees;
 
+    console.log(user);
     const bookingData = {
       customer_id: user?.id,
       vendor_id: cartItem?.service?.vendor?.id,
@@ -158,9 +134,112 @@ export default function BookServicePage() {
     setConfirmationOpen(true);
   };
 
-  const handleConfirmBooking = () => {
-    console.log(confirmedBooking);
-    // setConfirmationOpen(false);
+  function cleanTime12Hr(time) {
+    return time.replace(/\s?(am|pm)/i, "").trim();
+  }
+  // convert yyyy-mm-dd -> dd-mm-yy
+  function formatDate(dateStr) {
+    const [year, month, day] = dateStr.split("-");
+    return `${day}-${month}-${year.slice(2)}`;
+  }
+
+  const handleConfirmBooking = async (type) => {
+    console.log(type);
+    const formData = new FormData();
+
+    formData.append("customer_id", confirmedBooking.customer_id);
+    formData.append("amount", confirmedBooking.amount);
+    formData.append("vendor_id", confirmedBooking.vendor_id);
+    formData.append("service_id", confirmedBooking.services);
+    formData.append("platform_fee", confirmedBooking.platform_fee);
+    formData.append("status", "pending");
+    formData.append("is_paid_key", type === "pay_now" ? "1" : "0"); // ✅ dynamic
+    formData.append("tax", "5");
+
+    const formattedDate = formatDate(confirmedBooking.date);
+    confirmedBooking.slots.forEach((slot) => {
+      const cleanSlot = cleanTime12Hr(slot);
+      formData.append(`schedule_time[${cleanSlot}]`, formattedDate);
+    });
+
+    try {
+      // ✅ Create booking/order
+      const order = await createOrder(formData).unwrap();
+
+      if (!order?.data?.id) {
+        toast.error("Failed to create booking");
+        return;
+      }
+
+      if (type === "pay_now") {
+        // 🔹 Razorpay payment flow
+        if (!order?.data?.order_id) {
+          toast.error("Failed to create Razorpay order");
+          return;
+        }
+
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: order?.data?.amount,
+          currency: "INR",
+          name: "Quickmyslot",
+          description: "Book your Services",
+          order_id: order?.data?.order_id,
+          handler: async function (response) {
+            const verifyData = new FormData();
+            verifyData.append("booking_id", order?.data?.id);
+            verifyData.append(
+              "razorpay_payment_id",
+              response.razorpay_payment_id
+            );
+            verifyData.append("razorpay_order_id", response.razorpay_order_id);
+            verifyData.append(
+              "razorpay_signature",
+              response.razorpay_signature
+            );
+
+            try {
+              const verifyRes = await verifyPayment(verifyData).unwrap();
+              if (verifyRes.status) {
+                toast.success("Payment verified & booking confirmed!");
+                refetch();
+              } else {
+                toast.error("Payment verification failed");
+              }
+            } catch (err) {
+              toast.error("Error verifying payment");
+              console.error(err);
+            }
+          },
+          prefill: {
+            name: user?.name,
+            contact: user?.phone_number,
+            email: user?.email,
+          },
+          theme: { color: "#EE4E34" },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        // 🔹 No payment
+        refetch();
+        toast.success("Booking created successfully (without payment)!");
+      }
+    } catch (err) {
+      toast.error("Error creating booking");
+      console.error(err);
+    }
+
+    // ✅ Reset states
+    setConfirmedBooking(null);
+    setSelectedDate(null);
+    setConfirmationOpen(false);
+    setCartItem(null);
+    setSelectedSlots([]);
+    setNote("");
+    form.resetFields();
+    refetch();
   };
 
   const removeItem = async (id) => {
@@ -511,16 +590,19 @@ export default function BookServicePage() {
         open={confirmationOpen}
         onCancel={() => setConfirmationOpen(false)}
         footer={[
-          <Button key="cancel" onClick={() => setConfirmationOpen(false)}>
-            Cancel Booking
+          <Button
+            key="pay_later"
+            onClick={() => handleConfirmBooking("pay_later")}
+          >
+            Confirm $ Pay Later
           </Button>,
           <Button
             key="confirm"
             type="primary"
             style={{ backgroundColor: "#EE4E34", borderColor: "#EE4E34" }}
-            onClick={handleConfirmBooking}
+            onClick={() => handleConfirmBooking("pay_now")}
           >
-            Confirm & Pay
+            Confirm & Pay Now
           </Button>,
         ]}
         title="Booking Confirmation"

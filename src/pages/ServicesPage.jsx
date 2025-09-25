@@ -118,7 +118,7 @@ export default function ServicesPage() {
           <NoDataAvailable />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data?.data?.map((shop) => (
+            {data?.data?.data?.map((shop) => (
               <div
                 key={shop.id}
                 onClick={() =>

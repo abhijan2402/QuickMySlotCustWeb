@@ -10,6 +10,7 @@ import { analyticsApi } from "../services/analyticsApi";
 import { faqApi } from "../services/faqApi";
 import { walletApi } from "../services/walletApi";
 import { notificationApi } from "../services/notificationApi";
+import { paymentApi } from "../services/paymentApi";
 
 const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ const store = configureStore({
     [faqApi.reducerPath]: faqApi.reducer,
     [walletApi.reducerPath]: walletApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [paymentApi.reducerPath]: paymentApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -36,6 +38,7 @@ const store = configureStore({
       walletApi.middleware,
       analyticsApi.middleware,
       faqApi.middleware,
+      paymentApi.middleware,
       notificationApi.middleware
     ),
 });

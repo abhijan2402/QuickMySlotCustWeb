@@ -18,9 +18,19 @@ export const vendorApi = createApi({
       }),
       providesTags: ["vendor"],
     }),
+
+    // Get Vendor Schedule
     getSlotsShedule: builder.query({
       query: (id) => ({
         url: `customer/services/${id}/available-slots`,
+        method: "GET",
+      }),
+      providesTags: ["abc"],
+    }),
+    // Get Customer Appointments
+    getAppointments: builder.query({
+      query: (id) => ({
+        url: `customer/bookings/list`,
         method: "GET",
       }),
       providesTags: ["abc"],
@@ -108,4 +118,5 @@ export const {
   useAddToWishMutation,
   useGetWishListQuery,
   useRemoveWishListMutation,
+  useGetAppointmentsQuery
 } = vendorApi;

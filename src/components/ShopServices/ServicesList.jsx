@@ -26,7 +26,7 @@ export default function ServicesList() {
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
   const { data } = useGetvendorQuery(categoryData?.id);
-  const shopData = data?.data?.find((cat) => cat.id === Number(shopId));
+  const shopData = data?.data?.data?.find((cat) => cat.id === Number(shopId));
 
   const shopServices = shopData?.services || [];
 
@@ -48,7 +48,7 @@ export default function ServicesList() {
 
     try {
       const res = await addToCart(fd).unwrap();
-
+      console.log(res);
       if (res.status === "success") {
         if (res.data.added_items > 0) {
           toast.success("Service added to cart successfully!");
@@ -81,6 +81,8 @@ export default function ServicesList() {
           <div className="max-w-7xl mx-auto p-6">
             <CardCarouselLoader />
           </div>
+        ) : services?.data?.length === 0 ? (
+          <NoDataAvailable message="No services available" />
         ) : (
           <div className="flex flex-col md:flex-row gap-4 max-w-7xl mx-auto p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1 bg-white rounded-2xl p-4">
@@ -146,11 +148,6 @@ export default function ServicesList() {
                   </div>
                 );
               })}
-
-              {services?.data?.length === 0 && (
-                // <Empty description="No services available" />
-                <NoDataAvailable message="No services available" />
-              )}
             </div>
           </div>
         )}
