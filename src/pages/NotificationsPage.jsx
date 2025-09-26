@@ -4,20 +4,16 @@ import {
   HomeOutlined,
 } from "@ant-design/icons";
 import { useGetnotificationQuery } from "../services/notificationApi";
+import SpinnerLodar from "../components/SpinnerLodar";
 
 export default function NotificationsPage() {
   const { data, isLoading } = useGetnotificationQuery();
   const notifications = data?.data || [];
 
-  if (isLoading) {
-    return <div className="text-center py-10">Loading...</div>;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 mt-4">
       {/* Header Section */}
       <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6">
-        {/* Breadcrumb */}
         <nav className="flex items-center text-gray-500 text-sm mb-4">
           <HomeOutlined className="mr-1" />
           <span className="mr-1">/</span>
@@ -29,7 +25,11 @@ export default function NotificationsPage() {
         </h1>
 
         {/* Notifications List */}
-        {!notifications.length ? (
+        {isLoading ? (
+          <div className="h-[350px] flex items-center justify-center">
+            <SpinnerLodar />
+          </div>
+        ) : !notifications.length ? (
           <div className="h-[350px] flex flex-col items-center justify-center text-gray-500">
             <div className="text-6xl mb-4 text-gray-300 animate-pulse">
               <BellOutlined />

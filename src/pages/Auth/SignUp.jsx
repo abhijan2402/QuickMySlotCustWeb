@@ -10,8 +10,6 @@ import {
 import { logout, setToken, setUser } from "../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Password from "antd/es/input/Password";
-import AvailabilityModal from "./AvailabilityModal";
 import ProfileModal from "./ProfileModal";
 import { useGetProfileQuery } from "../../services/profileApi";
 const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -95,7 +93,7 @@ export default function Signup() {
 
   const handleResendOtp = async () => {
     try {
-      await resendOtp({ email_or_phone: emailOrPhone }).unwrap();
+      await resendOtp({ phone_number: emailOrPhone }).unwrap();
       toast.success("OTP resent!");
     } catch (err) {
       toast.error("Failed to resend OTP!");
@@ -137,17 +135,24 @@ export default function Signup() {
                 Start your journey with just one step
               </h2>
             ) : (
-              <p className=" text-gray-500 mb-6">
-                Start your journey with just one step –{" "}
-                <span className="text-purple-600">OTP!</span>
-              </p>
+              <>
+                <p
+                  className="text-orange-700 py-1 px-2 text-center text-sm rounded-md hover:bg-orange-600 hover:text-white transition-all border w-20 border-orange-600 bg-orange-50 cursor-pointer"
+                  onClick={() => setStep("form")}
+                >
+                  Go Back
+                </p>
+                <p className=" text-gray-500 mb-2 text-center">
+                  Start your journey with just one step –{" "}
+                  <span className="text-orange-600">OTP!</span>
+                </p>
+              </>
             )}
 
             {step === "form" && (
               <Form form={form} layout="vertical" onFinish={handleSignup}>
                 <Form.Item
                   name="phone_number"
-                  label="Phone Number"
                   rules={[
                     { required: true, message: "Phone number is required" },
                     {
@@ -156,21 +161,25 @@ export default function Signup() {
                     },
                   ]}
                 >
-                  <Input
-                    placeholder="1234567890"
-                    size="large"
-                    maxLength={10}
-                    minLength={10}
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="\d*"
-                    onChange={(e) => {
-                      const val = e.target.value
-                        .replace(/[^\d]/g, "")
-                        .slice(0, 10);
-                      form.setFieldsValue({ phone_number: val });
-                    }}
-                  />
+                  <div className="flex justify-center items-center gap-1">
+                    <p className="p-2 border rounded-md font-medium">+91</p>
+                    <Input
+                      placeholder="1234567890"
+                      size="large"
+                      maxLength={10}
+                      minLength={10}
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      onChange={(e) => {
+                        const val = e.target.value
+                          .replace(/[^\d]/g, "")
+                          .slice(0, 10);
+                        form.setFieldsValue({ phone_number: val });
+                      }}
+                      label="Phone Number"
+                    />
+                  </div>
                 </Form.Item>
 
                 <Button
@@ -215,15 +224,15 @@ export default function Signup() {
                   >
                     Resend OTP
                   </Button>
-                  <Button
+                  <button
                     // type="primary"
                     onClick={handleVerifyOtp}
                     size="large"
                     loading={verifying}
-                    className="bg-[#EE4E34] text-white hover:bg-purple-800 text-sm py-1"
+                    className="bg-[#EE4E34] text-white p-4 rounded-md py-2 hover:bg-orange-600 text-sm"
                   >
                     Verify OTP
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
@@ -264,19 +273,6 @@ export default function Signup() {
           setStep("form");
         }}
         userID={userID}
-      />
-
-      {/* ✅ Availability Modal */}
-      <AvailabilityModal
-        visible={showAvailabilityModal}
-        userID={userID}
-        onClose={() => {
-          dispatch(logout());
-          setShowAvailabilityModal(false);
-          navigate("/signup");
-          setStep("form");
-          setOtp(Array(6).fill(""));
-        }}
       />
     </>
   );
