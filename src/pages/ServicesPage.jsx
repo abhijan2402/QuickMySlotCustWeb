@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Slider from "react-slick"; // Install with: npm i react-slick slick-carousel
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,6 +11,7 @@ import { useGetcategoryQuery } from "../services/categoryApi";
 import CardCarouselLoader from "../components/CardCarouselLoader";
 import NoDataAvailable from "./NoDataAvailable";
 import { useVendors } from "../hooks/useVendor";
+import Pagination from "../components/Pagination";
 
 export default function ServicesPage() {
   const { id } = useParams();
@@ -53,6 +54,16 @@ export default function ServicesPage() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalItems = data?.data?.total ?? 0;
+  const perPage = data?.data?.per_page ?? 20;
+  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+  useEffect(() => {
+    if (data?.data?.current_page) {
+      setCurrentPage(data?.data?.current_page);
+    }
+  }, [data]);
 
   return (
     <>
@@ -117,60 +128,78 @@ export default function ServicesPage() {
         ) : data?.data?.length <= 0 ? (
           <NoDataAvailable />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data?.data?.data?.map((shop) => (
-              <div
-                key={shop.id}
-                onClick={() =>
-                  navigate(
-                    `/services/${categoryData?.name || "all"}/${shop.id}`
-                  )
-                }
-                className="border rounded-lg shadow-lg overflow-hidden bg-white cursor-pointer hover:shadow-xl transition"
-              >
-                {/* Image Carousel */}
-                <div className="relative">
-                  {shop?.portfolio_images?.length > 0 ? (
-                    <Slider {...sliderSettings}>
-                      {shop.portfolio_images.map((img, i) => (
-                        <img
-                          key={i}
-                          src={img}
-                          alt={shop.name}
-                          className="w-full h-56 object-cover"
-                        />
-                      ))}
-                    </Slider>
-                  ) : (
-                    <div className="w-full h-56 flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
-                      Image not available
-                    </div>
-                  )}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {data?.data?.data?.map((shop) => (
+                <div
+                  key={shop.id}
+                  onClick={() =>
+                    navigate(
+                      `/services/${categoryData?.name || "all"}/${shop.id}`
+                    )
+                  }
+                  className="border rounded-lg shadow-lg overflow-hidden bg-white cursor-pointer hover:shadow-xl transition"
+                >
+                  {/* Image Carousel */}
+                  <div className="relative">
+                    {shop?.portfolio_images?.length > 0 ? (
+                      <Slider {...sliderSettings}>
+                        {shop.portfolio_images.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img}
+                            alt={shop.name}
+                            className="w-full h-56 object-cover"
+                          />
+                        ))}
+                      </Slider>
+                    ) : (
+                      <div className="w-full h-56 flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
+                        Image not availables
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Shop Info */}
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold text-[#EE4E34]">
+                      {shop.business_name || "NA"}
+                    </h3>
+                    {/* <p className="text-gray-600 text-sm">{shop.address}</p> */}
+
+                    <p className="text-gray-500 text-sm mt-1">
+                      Experience: {shop.years_of_experience}
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Available: {shop.daily_end_time} - {shop.daily_start_time}{" "}
+                      | {shop.working_days[0]} -{" "}
+                      {shop.working_days[shop.working_days.length - 1]}
+                    </p>
+
+                    <p className="text-gray-500 text-sm">
+                      Address: {shop.location_area_served},{" "}
+                      {shop.exact_location}
+                    </p>
+                  </div>
                 </div>
-
-                {/* Shop Info */}
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-[#EE4E34]">
-                    {shop.business_name || "NA"}
-                  </h3>
-                  {/* <p className="text-gray-600 text-sm">{shop.address}</p> */}
-
-                  <p className="text-gray-500 text-sm mt-1">
-                    Experience: {shop.years_of_experience}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Available: {shop.daily_end_time} - {shop.daily_start_time} |{" "}
-                    {shop.working_days[0]} -{" "}
-                    {shop.working_days[shop.working_days.length - 1]}
-                  </p>
-
-                  <p className="text-gray-500 text-sm">
-                    Address: {shop.location_area_served}, {shop.exact_location}
-                  </p>
-                </div>
+              ))}
+            </div>
+            <div className="flex flex-col md:flex-row mt-4 justify-between items-center gap-4">
+              {/* Items per page selector */}
+              <div className="flex items-center space-x-2">
+                <label htmlFor="per-page" className="text-orange-600 text-sm">
+                  Items per page: {data?.data?.per_page}
+                </label>
               </div>
-            ))}
-          </div>
+
+              {/* Pagination Buttons */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setPageNo(page)}
+              />
+            </div>
+          </>
         )}
       </section>
     </>
