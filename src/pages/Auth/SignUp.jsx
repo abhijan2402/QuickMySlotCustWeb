@@ -1,5 +1,5 @@
 // pages/Signup.jsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useDispatch } from "react-redux";
 import {
@@ -26,13 +26,18 @@ export default function Signup() {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
 
+   const [timer, setTimer] = useState(120);
+   const timerRef = useRef(null);
+
   const { data: profile } = useGetProfileQuery();
   const [signup, { isLoading: signingUp }] = useSignupMutation();
   const [verifyOtp, { isLoading: verifying }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: resending }] = useResendOtpMutation();
 
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
   // Modal states
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
@@ -46,6 +51,18 @@ export default function Signup() {
         setUserID(response.user_id);
       }
       setStep("otp");
+       setTimer(120); // reset timer to 30s
+       if (timerRef.current) clearInterval(timerRef.current);
+
+       timerRef.current = setInterval(() => {
+         setTimer((prev) => {
+           if (prev <= 1) {
+             clearInterval(timerRef.current);
+             return 0;
+           }
+           return prev - 1;
+         });
+       }, 1000);
       toast.success("OTP sent successfully!");
     } catch (err) {
       toast.error(err?.data?.message || "Signup failed!");
@@ -123,36 +140,46 @@ export default function Signup() {
 
   return (
     <>
-      <div className="flex min-h-screen h-screen">
-        {/* Left side - Signup form */}
+      <div className="flex flex-col md:flex-row min-h-screen h-full bg-white">
+        {/* Left Side - Signup Form */}
         <div
-          className={`w-full md:w-1/2 overflow-y-auto h-screen flex flex-col items-center 
-       justify-center bg-white px-10 py-8`}
+          className={`
+      flex-1 w-full flex flex-col items-center justify-center 
+      px-4 py-6 md:px-10 md:py-8 bg-white relative
+    `}
         >
-          <div className="min-w-full max-w-screen-md  border rounded-md p-8 bg-gray-50">
+          {/* Logo for mobile */}
+          <div className="block md:hidden mb-6 w-full text-center">
+            <img
+              src="/logo1.png"
+              alt="QuickMySlot"
+              className="mx-auto mb-2 h-24 object-contain"
+            />
+            <h2 className="text-xl font-semibold text-[#EE4E34] mb-1">
+              QuickmySlot
+            </h2>
+            <p className="text-gray-400 text-sm">
+              The Ultimate Controller for Your QuickmySlot Application.
+            </p>
+          </div>
+
+          <div className="w-full md:max-w-2xl rounded-md p-6 md:p-8 bg-gray-50 shadow">
             {step === "form" ? (
-              <h2 className="text-2xl font-bold  text-gray-800 mb-2">
+              <h2 className="text-md sm:text-xl md:text-2xl font-bold text-gray-800 mb-4 text-center">
                 Start your journey with just one step
               </h2>
             ) : (
-              <>
-                <p
-                  className="text-orange-700 py-1 px-2 text-center text-sm rounded-md hover:bg-orange-600 hover:text-white transition-all border w-20 border-orange-600 bg-orange-50 cursor-pointer"
-                  onClick={() => setStep("form")}
-                >
-                  Go Back
-                </p>
-                <p className=" text-gray-500 mb-2 text-center">
-                  Start your journey with just one step –{" "}
-                  <span className="text-orange-600">OTP!</span>
-                </p>
-              </>
+              <p className="text-center text-gray-500 mb-2">
+                Start your journey with just one step –{" "}
+                <span className="text-[#EE4E34] font-semibold">OTP!</span>
+              </p>
             )}
 
             {step === "form" && (
               <Form form={form} layout="vertical" onFinish={handleSignup}>
                 <Form.Item
                   name="phone_number"
+                  label="Phone Number"
                   rules={[
                     { required: true, message: "Phone number is required" },
                     {
@@ -161,8 +188,10 @@ export default function Signup() {
                     },
                   ]}
                 >
-                  <div className="flex justify-center items-center gap-1">
-                    <p className="p-2 border rounded-md font-medium">+91</p>
+                  <div className="flex items-center gap-2">
+                    <p className="p-2 px-3 border rounded-md text-black font-medium bg-gray-200">
+                      +91
+                    </p>
                     <Input
                       placeholder="1234567890"
                       size="large"
@@ -171,24 +200,23 @@ export default function Signup() {
                       type="tel"
                       inputMode="numeric"
                       pattern="\d*"
+                      className="w-full"
                       onChange={(e) => {
                         const val = e.target.value
                           .replace(/[^\d]/g, "")
                           .slice(0, 10);
                         form.setFieldsValue({ phone_number: val });
                       }}
-                      label="Phone Number"
                     />
                   </div>
                 </Form.Item>
-
                 <Button
                   type="primary"
                   htmlType="submit"
                   block
                   size="large"
                   loading={signingUp}
-                  className="bg-[#EE4E34] hover:bg-purple-800"
+                  className="bg-[#EE4E34] hover:bg-purple-800 mt-4"
                 >
                   Continue
                 </Button>
@@ -199,10 +227,9 @@ export default function Signup() {
               <div>
                 <p className="text-center text-gray-600 mb-4">
                   Enter the 6-digit OTP sent to your{" "}
-                  <span className="font-medium">{emailOrPhone}</span>
+                  <span className="font-medium">+91 {emailOrPhone}</span>
                 </p>
-
-                <div className="flex justify-between mb-6">
+                <div className="flex justify-center gap-2 mb-6">
                   {otp.map((digit, index) => (
                     <Input
                       key={index}
@@ -210,42 +237,44 @@ export default function Signup() {
                       onChange={(e) => handleChange(e.target.value, index)}
                       onKeyDown={(e) => handleKeyDown(e, index)}
                       maxLength={1}
-                      className="w-12 h-12 text-center text-lg border rounded-md"
+                      className="w-12 h-12 text-center text-orange-600 text-lg border rounded-md"
                       ref={(el) => (inputRefs.current[index] = el)}
+                      style={{ fontSize: "1.5rem" }}
                     />
                   ))}
                 </div>
-
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <Button
                     onClick={handleResendOtp}
                     loading={resending}
-                    type="link"
+                    size="large"
+                    disabled={timer > 0}
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                   >
-                    Resend OTP
+                    {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                   </Button>
-                  <button
-                    // type="primary"
+                  <Button
                     onClick={handleVerifyOtp}
                     size="large"
                     loading={verifying}
-                    className="bg-[#EE4E34] text-white p-4 rounded-md py-2 hover:bg-orange-600 text-sm"
+                    // disabled={timer === 0}
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                   >
                     Verify OTP
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right side - Branding */}
-        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#EE4E34] items-center justify-center text-center p-10">
+        {/* Right Side - Branding (Desktop/Tablet only) */}
+        <div className="hidden md:flex flex-1 h-screen bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
-              src="/Selection.png"
+              src="/logo1.png"
               alt="QuickMySlot"
-              className="mx-auto mb-4 h-40 object-contain"
+              className="mx-auto mb-0 h-80 object-contain"
             />
             <h2 className="text-2xl font-semibold text-white mb-2">
               QuickmySlot

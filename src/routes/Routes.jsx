@@ -42,13 +42,10 @@ export default function AppRoutes() {
           path="/book-servicelist/:type/:shopId/:serviceId"
           element={<ServicesList />}
         />
-        <Route
-          path="/cart"
-          element={<BookServicePage />}
-        />
+        <Route path="/cart" element={<BookServicePage />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route
-          path="/appointments/:type/:id"
+          path="/appointments_details/:id"
           element={<AppointmentDetails />}
         />
         <Route path="/pricing" element={<PricingModal />} />

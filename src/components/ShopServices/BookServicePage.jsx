@@ -548,19 +548,17 @@ export default function BookServicePage() {
         {/* Bill Summary */}
         <h3 className="font-semibold mb-2">Bill Summary</h3>
         {(() => {
-          const subtotal = Number(cartItem?.item_price) || 0;
-          const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
-          const platformFee = 50;
-          // const slot = selectedSlot?.fee || 0;
-          // Sum of selected slot fees
           const slotFees = selectedSlots?.reduce(
             (sum, slot) => sum + (slot.fee || 0),
             0
           );
+          const subtotal = Number(cartItem?.item_price) + slotFees || 0;
+          const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
+          const platformFee = 50;
 
-          const grandTotal = subtotal - discount + platformFee + slotFees;
+          const grandTotal = subtotal - discount + platformFee;
 
-          // console.log(subtotal, discount, slot, grandTotal);
+          // console.log(subtotal, discount, slotFees, grandTotal);
 
           return (
             <div className="space-y-2 text-base">
@@ -595,7 +593,7 @@ export default function BookServicePage() {
             key="pay_later"
             onClick={() => handleConfirmBooking("pay_later")}
           >
-            Confirm $ Pay Later
+            Confirm & Pay Later
           </Button>,
           <Button
             key="confirm"

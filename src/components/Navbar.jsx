@@ -7,13 +7,15 @@ import {
 } from "react-icons/fa"; // For wishlist and location icons
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/clogo.png";
-import { FaLocationPin } from "react-icons/fa6";
+import logo from "/logo.png";
+import { FaLocationDot, FaLocationPin } from "react-icons/fa6";
 import { BiHeart } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { MdOutlineMyLocation } from "react-icons/md";
 import { useGetCartListQuery } from "../services/vendorApi";
+import { getCityAndAreaFromAddress } from "../utils/utils";
+import { IoIosArrowDown } from "react-icons/io";
 
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
@@ -22,6 +24,29 @@ export default function Navbar() {
   console.log(user);
   const navigate = useNavigate();
   const location = useLocation();
+  const [city, setCity] = useState(null);
+  const [area, setArea] = useState(null);
+  const [initialLocation, setInitialLocation] = useState(null);
+console.log(area, city)
+  useEffect(() => {
+    async function fetchCityAndArea() {
+      if (user?.exact_location) {
+        const result = await getCityAndAreaFromAddress(user.exact_location);
+        if (result) {
+          console.log(result.city, result.area);
+          setCity(result.city);
+          setArea(result.area);
+        } else {
+          setCity(null);
+          setArea(null);
+        }
+      } else {
+        setCity(null);
+        setArea(null);
+      }
+    }
+    fetchCityAndArea();
+  }, [user?.exact_location]);
 
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
@@ -146,18 +171,23 @@ export default function Navbar() {
               </button>
               <div
                 role="button"
-                className="flex items-center space-x-2 bg-white rounded-lg px-3 py-1 border border-gray-300 hover:shadow-md transition-shadow cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+                className="flex items-center gap-1  rounded-l  cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+                title="Click to select a different location"
+                onClick={() => setModalOpen(true)}
               >
-                <MdOutlineMyLocation
-                  className="w-5 h-5 text-[#EE4E34]"
+                <FaLocationDot
+                  className="w-6 h-6 text-[#EE4E34]"
                   aria-hidden="true"
                 />
                 <div className="flex flex-col leading-none">
-                  <span className="font-bold text-[#EE4E34] text-[14px]">
-                    {user?.city || "NA"}
-                  </span>
-                  <p className="text-[10px] mt-1 text-gray-600">
-                    {user?.address || "NA"}
+                  {/* <span className="font-bold text-[#EE4E34] text-[14px]">
+                    {city || "NA"}
+                  </span> */}
+                  <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
+                    {city || "NA"}
+                    <span>
+                      <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
+                    </span>
                   </p>
                 </div>
               </div>

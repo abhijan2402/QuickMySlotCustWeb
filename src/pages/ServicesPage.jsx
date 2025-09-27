@@ -147,7 +147,7 @@ export default function ServicesPage() {
                         {shop.portfolio_images.map((img, i) => (
                           <img
                             key={i}
-                            src={img}
+                            src={img?.image_url}
                             alt={shop.name}
                             className="w-full h-56 object-cover"
                           />

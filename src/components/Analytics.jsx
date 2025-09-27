@@ -30,35 +30,43 @@ const Analytics = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="p-4 rounded-xl shadow bg-gradient-to-r from-blue-50 to-blue-100">
           <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-            <FaWallet className="text-blue-500" /> Revenue This Month
+            <FaWallet className="text-blue-500" /> Spending This Month
           </h4>
           <p className="text-2xl font-bold text-gray-900 mt-2">
-            ₹{data?.data?.revenue_this_month ?? 0}
+            ₹{data?.data?.spend_this_month ?? 0}
+          </p>
+        </div>
+        <div className="p-4 rounded-xl shadow bg-gradient-to-r from-blue-50 to-blue-100">
+          <h4 className="text-gray-700 font-semibold flex items-center gap-2">
+            <FaWallet className="text-blue-500" /> Favorite Vendors
+          </h4>
+          <p className="text-2xl font-bold text-gray-900 mt-2">
+            {data?.data?.favorite_providers ?? 0}
           </p>
         </div>
         <div className="p-4 rounded-xl shadow bg-gradient-to-r from-green-50 to-green-100">
           <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-            <FaGift className="text-green-500" /> Total Customers
+            <FaGift className="text-green-500" /> Total Bookings
           </h4>
           <p className="text-2xl font-bold text-gray-900 mt-2">
-            {data?.data?.total_customers ?? 0}
+            {data?.data?.total_bookings ?? 0}
           </p>
         </div>
         <div className="p-4 rounded-xl shadow bg-gradient-to-r from-purple-50 to-purple-100">
           <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-            <FaChartPie className="text-purple-500" /> Reach (vs Last Month)
+            <FaChartPie className="text-purple-500" /> Saved This Month
           </h4>
           <p className="text-2xl font-bold text-gray-900 mt-2 flex items-center gap-1">
-            {data?.data?.reach ?? 0}
+            {data?.data?.saved_this_month ?? 0}
             <ArrowUpOutlined />
           </p>
         </div>
         <div className="p-4 rounded-xl shadow bg-gradient-to-r from-pink-50 to-pink-100">
           <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-            <FaHeart className="text-pink-500" /> Estimated Footfall
+            <FaHeart className="text-pink-500" /> Cashback Earnd 
           </h4>
           <p className="text-2xl font-bold text-gray-900 mt-2">
-            {data?.data?.estimated_footfall ?? 0}
+            {data?.data?.cashback_earned ?? 0}
           </p>
         </div>
       </div>

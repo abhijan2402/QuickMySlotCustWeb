@@ -73,7 +73,7 @@ const Wallet = () => {
       <h3 className="mb-6 font-semibold text-lg text-gray-800">
         Wallet Total Amount:{" "}
         <span className="text-indigo-600">
-          ₹ {data?.data?.total_amount?.toFixed()}
+          ₹ {data?.data?.total_amount?.toFixed() || "00.00"}
         </span>
       </h3>
 

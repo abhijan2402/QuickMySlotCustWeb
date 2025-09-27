@@ -139,7 +139,7 @@ export default function ProfilePage() {
             <Tooltip title="Wallet Balance">
               <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full shadow-sm">
                 <FaWallet className="text-green-600 text-lg" />
-                <span className="font-semibold text-gray-800">₹1000</span>
+                <span className="font-semibold text-gray-800">₹{user?.wallet || "00.00"}</span>
               </div>
             </Tooltip>
 

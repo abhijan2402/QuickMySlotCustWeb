@@ -13,7 +13,7 @@ export const analyticsApi = createApi({
     // Get faq (GET request)
     getanalytics: builder.query({
       query: () => ({
-        url: "customer/analytics",
+        url: "analytics",
         method: "GET",
       }),
       providesTags: ["analytics"],
