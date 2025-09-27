@@ -21,7 +21,7 @@ export const offerApi = createApi({
     // Get Higlghted offer (GET request)
     getHiglightedOffer: builder.query({
       query: () => ({
-        url: `customer/promo-codes/highlighted`,
+        url: `customer/promo-code/highlighted`,
         method: "GET",
       }),
       providesTags: ["offer"],

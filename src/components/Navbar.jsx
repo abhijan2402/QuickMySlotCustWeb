@@ -14,10 +14,17 @@ import { BsBellFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { MdOutlineMyLocation } from "react-icons/md";
 import { useGetCartListQuery } from "../services/vendorApi";
-import { getCityAndAreaFromAddress } from "../utils/utils";
+import {
+  getAddressFromLatLng,
+  getCityAndAreaFromAddress,
+  getLatLngFromAddress,
+} from "../utils/utils";
 import { IoIosArrowDown } from "react-icons/io";
+import LocationModal from "./Modals/LocationModal";
+import { useLocationContext } from "../context/LocationProvider";
 
 export default function Navbar() {
+    const { newLoc, setNewLoc } = useLocationContext();
   const user = useSelector((state) => state.auth.user);
   const { data: cartList } = useGetCartListQuery();
   const cartCount = cartList?.data?.total_items || 0;
@@ -27,34 +34,63 @@ export default function Navbar() {
   const [city, setCity] = useState(null);
   const [area, setArea] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
-console.log(area, city)
+ 
+  console.log("newloc", newLoc);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+
   useEffect(() => {
     async function fetchCityAndArea() {
-      if (user?.exact_location) {
-        const result = await getCityAndAreaFromAddress(user.exact_location);
+      // If lat/lng is present in newLoc, use reverse geocoding accordingly
+      if (newLoc?.lat && newLoc?.lng) {
+        // Assuming you have a function getAddressFromLatLng that returns { city, area }
+        const result = await getAddressFromLatLng(newLoc.lat, newLoc.lng);
         if (result) {
-          console.log(result.city, result.area);
           setCity(result.city);
           setArea(result.area);
-        } else {
-          setCity(null);
-          setArea(null);
+          return;
         }
+      }
+
+      // Otherwise, fallback to geocode from user.address when available
+      if (user?.address) {
+        const result = await getCityAndAreaFromAddress(user.address);
+        if (result) {
+          setCity(result.city);
+          setArea(result.area);
+          return;
+        }
+      }
+
+      // Reset if neither are available or failed lookup
+      setCity(null);
+      setArea(null);
+    }
+
+    fetchCityAndArea();
+  }, [user?.address, newLoc]);
+
+  // Convert user's address to lat/lng on change
+  const addressString = user?.address;
+  useEffect(() => {
+    async function fetchLatLng() {
+      const coord = await getLatLngFromAddress(addressString);
+      if (coord) {
+        setInitialLocation(coord);
       } else {
-        setCity(null);
-        setArea(null);
+        console.error("Could not geocode address");
       }
     }
-    fetchCityAndArea();
-  }, [user?.exact_location]);
+    fetchLatLng();
+  }, [addressString]);
 
-  // Example username for profile icon (replace with actual user data)
-  const username = "JohnDoe";
+  console.log(initialLocation);
 
   const navItems = [
     "Home",
     "My Appointment",
-    "Subscription",
+    "Membership",
     "Offers",
     "Support",
   ];
@@ -62,7 +98,7 @@ console.log(area, city)
     "/": "Home",
     "/appointments": "My Appointment",
     "/offers": "Offers",
-    "/pricing": "Subscription",
+    "/pricing": "Membership",
     "/support": "Support",
   };
   const [active, setActive] = useState(routeToNavItem[location.pathname] || "");
@@ -184,7 +220,7 @@ console.log(area, city)
                     {city || "NA"}
                   </span> */}
                   <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
-                    {city || "NA"}
+                    {area || "NA"}, {city || "NA"}
                     <span>
                       <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                     </span>
@@ -199,19 +235,24 @@ console.log(area, city)
             {!isMinimalPage && (
               <>
                 <div
-                  className="flex items-center bg-white rounded-lg px-3 py-1 border border-gray-300"
+                  role="button"
+                  className="flex items-center gap-1  rounded-l  cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
                   title="Click to select a different location"
+                  onClick={() => setModalOpen(true)}
                 >
-                  <MdOutlineMyLocation
-                    className="w-5 h-5 text-[#EE4E34]"
+                  <FaLocationDot
+                    className="w-6 h-6 text-[#EE4E34]"
                     aria-hidden="true"
                   />
-                  <div className="flex flex-col leading-none ml-2">
-                    <span className="font-bold text-[#EE4E34] text-[14px]">
-                      {user?.city || "NA"}
-                    </span>
-                    <p className="text-[10px] mt-1 text-gray-600">
-                      {user?.address || "NA"}
+                  <div className="flex flex-col leading-none">
+                    {/* <span className="font-bold text-[#EE4E34] text-[14px]">
+                    {city || "NA"}
+                  </span> */}
+                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
+                      {area || "NA"}, {city || "NA"}
+                      <span>
+                        <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -311,6 +352,16 @@ console.log(area, city)
           )}
         </AnimatePresence>
       )}
+
+      <LocationModal
+        open={modalOpen}
+        initialLocation={initialLocation}
+        onOk={(loc) => {
+          setUserLocation({ lat: loc.lat, lng: loc.lng });
+          setModalOpen(false);
+        }}
+        onCancel={() => setModalOpen(false)}
+      />
     </>
   );
 }

@@ -47,6 +47,7 @@ export async function getLatLngFromAddress(address) {
 }
 
 
+// Get City And Adress 
 export async function getCityAndAreaFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -93,3 +94,47 @@ export async function getCityAndAreaFromAddress(address) {
   }
 }
 
+// Function to get address info (city, area) from latitude and longitude
+export async function getAddressFromLatLng(lat, lng) {
+  const apiKey = import.meta.env.VITE_MAP_KEY;
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log("Reverse Geocode API Response:", data); // Full response for debugging
+
+    if (data.status === "OK" && data.results.length > 0) {
+      const place = data.results[0];
+
+      // Parse city and area from address components
+      let city = "";
+      let area = "";
+
+      place.address_components.forEach((component) => {
+        if (component.types.includes("locality")) {
+          city = component.long_name;
+        }
+        if (
+          component.types.includes("sublocality") ||
+          component.types.includes("sublocality_level_1") ||
+          component.types.includes("neighborhood") // optionally
+        ) {
+          area = component.long_name;
+        }
+      });
+
+      return {
+        full_address: place.formatted_address,
+        city,
+        area,
+      };
+    } else {
+      console.error("No results found or error status:", data.status);
+      return null;
+    }
+  } catch (error) {
+    console.error("Reverse geocoding error:", error);
+    return null;
+  }
+}

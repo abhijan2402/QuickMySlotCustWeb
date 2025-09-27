@@ -1,6 +1,6 @@
-"use client";
+
 import { useEffect, useState } from "react";
-import Slider from "react-slick"; // Install with: npm i react-slick slick-carousel
+import Slider from "react-slick"; 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,19 +12,24 @@ import CardCarouselLoader from "../components/CardCarouselLoader";
 import NoDataAvailable from "./NoDataAvailable";
 import { useVendors } from "../hooks/useVendor";
 import Pagination from "../components/Pagination";
+import { useLocationContext } from "../context/LocationProvider";
 
 export default function ServicesPage() {
   const { id } = useParams();
-  // const {
-  //   vendors,
-  //   isLoading: loadingVendors,
-  //   error: vendorsError,
-  // } = useVendors(id);
-  const { data, isLoading } = useGetvendorQuery(id);
+  const [lat, setLat] = useState("");
+  const [long, setLng] = useState("");
+  const { newLoc, setNewLoc } = useLocationContext();
+  useEffect(() => {
+    if (newLoc) {
+      setLng(newLoc.lng);
+      setLat(newLoc.lat);
+    }
+  }, [newLoc]);
+  const { data, isLoading } = useGetvendorQuery({ id, lat, long });
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.id === Number(id));
 
-  // console.log(data?.data);
+  console.log(newLoc);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -32,7 +37,7 @@ export default function ServicesPage() {
   // State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
-
+const [sortOrder, setSortOrder] = useState("default");
   const navigate = useNavigate();
 
   // Filtered Shops
@@ -105,19 +110,16 @@ export default function ServicesPage() {
                  focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             />
 
-            {/* Location Dropdown */}
+            {/* Sort Dropdown */}
             <select
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
               className="w-full sm:w-56 border rounded-lg px-4 py-2 shadow-sm bg-white text-gray-800 font-medium 
-                 focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-400 cursor-pointer transition"
+    focus:outline-none focus:ring-2 focus:ring-purple-500 hover:border-purple-400 cursor-pointer transition"
             >
-              <option value="All">All Locations</option>
-              {locations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
-                </option>
-              ))}
+              <option value="default">Sort by Price</option>
+              <option value="lowToHigh">Price: Low to High</option>
+              <option value="highToLow">Price: High to Low</option>
             </select>
           </div>
         </div>
@@ -125,7 +127,7 @@ export default function ServicesPage() {
         {/* Shops Grid */}
         {isLoading ? (
           <CardCarouselLoader count={6} />
-        ) : data?.data?.length <= 0 ? (
+        ) : !data?.data?.length ? (
           <NoDataAvailable />
         ) : (
           <>
