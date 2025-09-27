@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Form } from "antd";
 import {
   useAddSubscriptionMutation,
+  useGetsubscriptionQuery,
   useVerifySubscriptionMutation,
 } from "../services/subscriptionApi";
 
@@ -44,6 +45,10 @@ const MembershipPage = () => {
     },
   ];
 
+  const { data } = useGetsubscriptionQuery();
+
+  console.log(data);
+
   const [addSubscription] = useAddSubscriptionMutation();
   const [verifySubscription] = useVerifySubscriptionMutation();
 
@@ -66,7 +71,7 @@ const MembershipPage = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order?.amount,
         currency: "INR",
-        name: "Quickmyslot",
+        name: "QuickMySlot",
         description: "Membership Payment",
         image: "/logo1.png",
         order_id: order?.order_id,

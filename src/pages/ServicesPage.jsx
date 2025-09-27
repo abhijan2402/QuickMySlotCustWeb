@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import Slider from "react-slick"; 
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,7 +28,7 @@ export default function ServicesPage() {
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.id === Number(id));
 
-  console.log(newLoc);
+  // console.log(newLoc);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -37,7 +36,7 @@ export default function ServicesPage() {
   // State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
-const [sortOrder, setSortOrder] = useState("default");
+  const [sortOrder, setSortOrder] = useState("default");
   const navigate = useNavigate();
 
   // Filtered Shops

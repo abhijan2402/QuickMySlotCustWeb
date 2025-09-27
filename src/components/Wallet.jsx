@@ -1,12 +1,19 @@
 import { Button, Form, Input, Modal, Table } from "antd";
 import { useState } from "react";
-import { useAddwalletMutation, useGetwalletQuery } from "../services/walletApi";
+import {
+  useAddwalletMutation,
+  useGetwalletQuery,
+  useVerifyPaymentMutation,
+} from "../services/walletApi";
 import { toast } from "react-toastify";
 import { convertToIST } from "../utils/utils";
+import { useSelector } from "react-redux";
 
 const Wallet = () => {
+  const user = useSelector((state) => state.auth.user);
   const { data } = useGetwalletQuery();
   const [addwallet] = useAddwalletMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [form] = Form.useForm();
 
@@ -14,19 +21,62 @@ const Wallet = () => {
     form.validateFields().then(async (values) => {
       const formData = new FormData();
       formData.append("amount", values.amount);
-      formData.append("type", "credit");
-      try {
-        await addwallet(formData)
-          .unwrap()
-          .then(() => {
-            toast.success("Amount added to wallet.");
-            setIsAddModalVisible(false);
-            form.resetFields();
-          });
-      } catch (error) {
-        console.error("Failed to add amount:", error);
-        toast.error("Failed to add amount.");
+      // formData.append("type", "credit");
+
+      // ✅ Create booking/order
+      const order = await addwallet(formData).unwrap();
+      console.log(order);
+
+      // 🔹 Razorpay payment flow
+      if (!order?.order_id) {
+        toast.error("Failed to create Razorpay order");
+        return;
       }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order?.amount,
+        currency: "INR",
+        name: "QuickMySlot",
+        description: "Add Amount to Wallet",
+        image: "/logo1.png",
+        order_id: order?.order_id,
+        handler: async function (response) {
+          const verifyData = new FormData();
+          verifyData.append("amount", order?.amount);
+          verifyData.append(
+            "razorpay_payment_id",
+            response.razorpay_payment_id
+          );
+          verifyData.append("razorpay_order_id", response.razorpay_order_id);
+          verifyData.append("razorpay_signature", response.razorpay_signature);
+
+          try {
+            const verifyRes = await verifyPayment(verifyData).unwrap();
+            console.log(verifyRes);
+            if (verifyRes.status) {
+              toast.success("Payment verified & booking confirmed!");
+            } else {
+              toast.error("Payment verification failed");
+            }
+          } catch (err) {
+            toast.error("Error verifying payment");
+            console.error(err);
+            setIsAddModalVisible(false);
+          }
+        },
+        prefill: {
+          name: user?.name,
+          contact: user?.phone_number,
+          email: user?.email,
+        },
+        theme: { color: "#EE4E34" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      setIsAddModalVisible(false);
+      form.resetFields();
     });
   };
 
@@ -50,11 +100,17 @@ const Wallet = () => {
     },
     {
       title: "Type",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "status",
+      key: "status",
       render: (type) => (
-        <span className="font-medium text-gray-700">
-          {type === "credit" && "credited"}
+        <span
+          className={`text-[10px] p-2 py-1 rounded-md font-medium border ${
+            type === 0
+              ? "bg-orange-100 border-orange-400 text-orange-700"
+              : "bg-green-100 border-green-400 text-green-700"
+          }`}
+        >
+          {type === 0 ? "Pending" : "Success"}
         </span>
       ),
     },
@@ -72,9 +128,7 @@ const Wallet = () => {
     <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white rounded-lg">
       <h3 className="mb-6 font-semibold text-lg text-gray-800">
         Wallet Total Amount:{" "}
-        <span className="text-indigo-600">
-          ₹ {data?.data?.total_amount?.toFixed() || "00.00"}
-        </span>
+        <span className="text-indigo-600">₹ {user?.wallet}</span>
       </h3>
 
       <Button
@@ -85,24 +139,26 @@ const Wallet = () => {
         Add Amount
       </Button>
 
-      {/* ✅ Ant Design Table with pagination */}
-      <Table
-        columns={columns}
-        dataSource={data?.data?.transactions || []}
-        rowKey="transaction_id"
-        bordered
-        pagination={{
-          pageSize: 5, // ✅ number of items visible per page
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20", "50"],
-        }}
-        locale={{ emptyText: "No data found" }}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={data?.data?.transactions || []}
+          rowKey="transaction_id"
+          bordered
+          pagination={{
+            pageSize: 5,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "20", "50"],
+          }}
+          locale={{ emptyText: "No data found" }}
+          scroll={{ x: "max-content" }} // allows horizontal scroll if columns overflow container width
+        />
+      </div>
 
       {/* Modal for adding amount */}
       <Modal
         title="Add Amount"
-        open={isAddModalVisible} // ✅ changed from "visible" (deprecated in v5)
+        open={isAddModalVisible}
         onOk={handleAddAmount}
         onCancel={() => setIsAddModalVisible(false)}
         okText="Add"

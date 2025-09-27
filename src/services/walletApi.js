@@ -13,7 +13,7 @@ export const walletApi = createApi({
     // Get wallet (GET request)
     getwallet: builder.query({
       query: (id) => ({
-        url: `customer/transaction/list`,
+        url: `wallet`,
         method: "GET",
       }),
       providesTags: ["wallet"],
@@ -26,7 +26,19 @@ export const walletApi = createApi({
       }),
       invalidatesTags: ["wallet"],
     }),
+    verifyPayment: builder.mutation({
+      query: (formData) => ({
+        url: `wallet/verify`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["wallet"],
+    }),
   }),
 });
 
-export const { useGetwalletQuery, useAddwalletMutation } = walletApi;
+export const {
+  useGetwalletQuery,
+  useAddwalletMutation,
+  useVerifyPaymentMutation,
+} = walletApi;

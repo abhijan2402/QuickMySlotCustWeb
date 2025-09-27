@@ -20,7 +20,6 @@ export function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-
 // Function to get Lat $ Long
 export async function getLatLngFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
@@ -31,7 +30,6 @@ export async function getLatLngFromAddress(address) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log("Geocode API Response:", data); // 👈 log full response
 
     if (data.status === "OK" && data.results.length > 0) {
       const location = data.results[0].geometry.location;
@@ -46,8 +44,7 @@ export async function getLatLngFromAddress(address) {
   }
 }
 
-
-// Get City And Adress 
+// Get City And Adress
 export async function getCityAndAreaFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
@@ -102,7 +99,6 @@ export async function getAddressFromLatLng(lat, lng) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log("Reverse Geocode API Response:", data); // Full response for debugging
 
     if (data.status === "OK" && data.results.length > 0) {
       const place = data.results[0];

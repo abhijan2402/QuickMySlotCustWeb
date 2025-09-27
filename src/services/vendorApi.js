@@ -13,7 +13,6 @@ export const vendorApi = createApi({
     // Get vendor (GET request)
     getvendor: builder.query({
       query: ({ id, lat, long }) => {
-        console.log("params:", id, lat, long);
         const params = new URLSearchParams();
 
         if (id) params.append("service_category", id);

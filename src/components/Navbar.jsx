@@ -28,14 +28,13 @@ export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
   const { data: cartList } = useGetCartListQuery();
   const cartCount = cartList?.data?.total_items || 0;
-  console.log(user);
+  // console.log(user);
   const navigate = useNavigate();
   const location = useLocation();
   const [city, setCity] = useState(null);
   const [area, setArea] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
  
-  console.log("newloc", newLoc);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
@@ -85,7 +84,7 @@ export default function Navbar() {
     fetchLatLng();
   }, [addressString]);
 
-  console.log(initialLocation);
+  // console.log(initialLocation);
 
   const navItems = [
     "Home",
