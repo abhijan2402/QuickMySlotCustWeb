@@ -45,10 +45,10 @@ export const vendorApi = createApi({
     }),
     // Get vendor (GET request)
     getvendorPromoCode: builder.query({
-      query: (id) => ({
-        url: `customer/promo-codes/${id}`,
-        method: "GET",
-      }),
+      query: (id) => {
+        if (!id) return;
+        return { url: `customer/promo-codes/${id}`, method: "GET" };
+      },
       providesTags: ["vendor"],
     }),
 
@@ -118,5 +118,5 @@ export const {
   useAddToWishMutation,
   useGetWishListQuery,
   useRemoveWishListMutation,
-  useGetAppointmentsQuery
+  useGetAppointmentsQuery,
 } = vendorApi;

@@ -31,7 +31,7 @@ const tabVariants = {
 };
 
 const statusMap = {
-  upcoming: "pending",
+  confirmed: "confirmed",
   accepted: "accepted",
   rejected: "rejected",
   past: "completed",
@@ -39,7 +39,7 @@ const statusMap = {
 
 export default function Appointments() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("upcoming");
+  const [activeTab, setActiveTab] = useState("confirmed");
   const apiStatus = statusMap[activeTab] || "";
   const { data, isLoading } = useGetvendorBookingQuery({ status: apiStatus });
   const [acceptBooking] = useAcceptBookingMutation();
@@ -224,7 +224,7 @@ export default function Appointments() {
   };
 
   const tabs = [
-    { id: "upcoming", icon: <FaChartPie />, label: "Upcoming" },
+    { id: "confirmed", icon: <FaChartPie />, label: "Confirmed" },
     { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
     { id: "rejected", icon: <FaTimesCircle />, label: "Rejected" },
     { id: "past", icon: <FaCalendarAlt />, label: "Completed" },

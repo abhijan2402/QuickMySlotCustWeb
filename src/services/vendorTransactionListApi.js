@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { GrStatusDisabled } from "react-icons/gr";
 export const vendorTransactionApi = createApi({
   reducerPath: "vendorTransactionApi",
   baseQuery: fetchBaseQuery({
@@ -18,9 +19,23 @@ export const vendorTransactionApi = createApi({
       }),
       providesTags: ["vendorTransaction"],
     }),
+    // Get SLots (GET request)
+    getSlots: builder.query({
+      query: (slotId) => {
+        if (!slotId) return "";
+        return {
+          url: `customer/services/${slotId}/available-slots`,
+          method: "GET",
+        };
+      },
+    }),
+
+    // Get Bookings
     getvendorBooking: builder.query({
       query: ({ status } = {}) => {
-        const url = status ? `bookings/list?status=${status}` : `bookings/list`;
+        const url = status
+          ? `customer/bookings/list?status=${status}`
+          : `customer/bookings/list`;
         return {
           url,
           method: "GET",
@@ -66,4 +81,5 @@ export const {
   useAcceptBookingMutation,
   useRejectBookingMutation,
   useCompletedBookingMutation,
+  useGetSlotsQuery,
 } = vendorTransactionApi;

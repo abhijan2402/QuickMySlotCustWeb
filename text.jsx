@@ -105,37 +105,28 @@ export default function BookServicePage() {
   console.log(cartItem);
 
   const handleConfirm = () => {
+    // Sum up all service prices in cart
+    const subtotal = cartItem?.item_price;
+
+    const discount = appliedOffer ? Math.round(subtotal * 0.1) : 0;
+    const platform_fee = 50;
+
+    // Sum of selected slot fees
     const slotFees = selectedSlots?.reduce(
       (sum, slot) => sum + (slot.fee || 0),
       0
     );
-    const subtotal = Number(cartItem?.item_price) + slotFees || 0;
 
-    // Find the selected offer object
-    const selectedOffer = availableOffers?.data?.find(
-      (offer) => offer.promo_code === appliedOffer
-    );
-
-    // Calculate discount amount
-    let discount = 0;
-    if (selectedOffer) {
-      if (selectedOffer.type === "flat") {
-        discount = Number(selectedOffer.amount);
-      } else if (selectedOffer.type === "percentage") {
-        discount = Math.round((Number(selectedOffer.amount) / 100) * subtotal);
-      }
-    }
-
-    const platformFee = 50;
-    const grandTotal = subtotal - discount + platformFee;
+    // Total amount including slot fees
+    const amount = subtotal - discount + platform_fee + slotFees;
 
     console.log(user);
     const bookingData = {
       customer_id: user?.id,
       vendor_id: cartItem?.service?.vendor?.id,
       services: cartItem?.service?.id,
-      amount: grandTotal,
-      platformFee,
+      amount,
+      platform_fee,
       status: "pending",
       tax: "5",
       date: selectedDate,
@@ -168,7 +159,7 @@ export default function BookServicePage() {
     formData.append("note", confirmedBooking.note);
     formData.append("vendor_id", confirmedBooking.vendor_id);
     formData.append("service_id", confirmedBooking.services);
-    formData.append("platform_fee", confirmedBooking.platformFee);
+    formData.append("platform_fee", confirmedBooking.platform_fee);
     formData.append("status", "pending");
     formData.append("is_paid_key", type === "pay_now" ? "1" : "0"); // ✅ dynamic
     formData.append("tax", "5");

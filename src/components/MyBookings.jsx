@@ -1,32 +1,19 @@
 import React from "react";
-import { BiArrowFromRight } from "react-icons/bi";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
-import { HiArrowNarrowLeft } from "react-icons/hi";
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaTimesCircle,
+} from "react-icons/fa";
 import Slider from "react-slick";
-
-const bookings = [
-  {
-    shopName: "Elite Salon",
-    services: [
-      { name: "Haircut", subServices: ["Beard Trim", "Shampoo"] },
-      { name: "Facial", subServices: ["Gold Facial"] },
-    ],
-    price: 1200,
-    date: "2025-08-25",
-    address: "123 Main Street, New Delhi",
-    phone: "9876543210",
-  },
-  {
-    shopName: "Urban Spa",
-    services: [{ name: "Full Body Massage", subServices: ["Aroma Therapy"] }],
-    price: 2500,
-    date: "2025-09-01",
-    address: "456 Park Avenue, Mumbai",
-    phone: "9123456780",
-  },
-];
+import { useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
+import SpinnerLodar from "../components/SpinnerLodar";
+import { useNavigate } from "react-router-dom";
 
 const MyBookings = () => {
+  const navigate = useNavigate();
+  const { data, isLoading } = useGetvendorBookingQuery({ status: "confirmed" });
+
+  // Slider arrows
   function NextArrow(props) {
     const { onClick } = props;
     return (
@@ -64,26 +51,27 @@ const MyBookings = () => {
       </div>
     );
   }
+
   const settings = {
     dots: false,
-    infinite: bookings.length > 1,
+    infinite: (data?.data?.length || 0) > 1,
     speed: 500,
-    slidesToShow: 2, // Default on desktop
+    slidesToShow: 2,
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
       {
-        breakpoint: 1024, // Tablet and below
+        breakpoint: 1024,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          arrows: false, // Optional: hide arrows on smaller screens for better UX
-          dots: true, // Show dots instead for easier navigation
+          arrows: false,
+          dots: true,
         },
       },
       {
-        breakpoint: 640, // Mobile phones
+        breakpoint: 640,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -94,74 +82,78 @@ const MyBookings = () => {
     ],
   };
 
+  const handleViewDetails = (booking) => {
+    console.log("View details clicked for booking:", booking);
+    navigate("/appointments");
+  };
+
+  // Take only first 6 bookings
+  const upcomingBookings = data?.data?.slice(0, 6) || [];
+
   return (
     <div className="w-full max-w-7xl mx-auto py-8">
       <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center w-full gap-4">
           <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           <div className="text-center px-6">
-            <h2 className="text-4xl font-extrabold text-[#EE4E34]">
-              My Appointmnets
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#EE4E34]">
+              Upcoming Appointments
             </h2>
           </div>
           <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
         </div>
       </div>
-      {bookings.length > 0 ? (
+
+      {isLoading ? (
+        <div className="flex justify-center">
+          <SpinnerLodar title="Loading upcoming bookings..." />
+        </div>
+      ) : upcomingBookings.length > 0 ? (
         <Slider {...settings}>
-          {bookings.map((booking, index) => (
-            <div key={index} className="px-3 ">
+          {upcomingBookings.map((booking) => (
+            <div key={booking.id} className="px-3">
               <div className="bg-white rounded-2xl h-[300px] shadow-lg p-6 border border-gray-200 flex flex-col justify-between overflow-y-auto">
-                {/* Shop Name */}
                 <h3 className="text-xl font-semibold text-[#EE4E34] mb-2">
-                  {booking.shopName}
+                  {booking.customer?.name || "Customer"}
                 </h3>
 
                 {/* Services */}
-                <div className="mb-4">
-                  <p className="text-gray-800 font-medium">Services:</p>
+                <div className="mb-4 flex-1">
+                  <p className="text-gray-800 font-medium">Service:</p>
                   <ul className="list-disc list-inside text-gray-600 ml-2">
-                    {booking.services.map((service, i) => (
-                      <li key={i}>
-                        {service.name}{" "}
-                        {service.subServices?.length > 0 && (
-                          <span className="text-sm text-gray-500">
-                            ({service.subServices.join(", ")})
-                          </span>
-                        )}
-                      </li>
-                    ))}
+                    <li>{booking.service?.name}</li>
                   </ul>
+
+                  {/* Price & Date */}
+                  <div className="flex justify-between items-center mt-2">
+                    <p className="text-lg font-semibold text-green-600">
+                      Price: ₹{booking.amount}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Date:{" "}
+                      {Object.entries(booking.schedule_time || {})
+                        .map(([time, date]) => `${date} - ${time}`)
+                        .join(", ")}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Price & Date */}
-                <div className="flex justify-between items-center mb-4">
-                  <p className="text-lg font-semibold text-green-600">
-                    ₹{booking.price}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(booking.date).toLocaleDateString()}
-                  </p>
-                </div>
-
-                {/* Address */}
-                <p className="text-gray-700 mb-1">
-                  📍 <span className="font-medium">{booking.address}</span>
-                </p>
-
-                {/* Phone */}
-                <p className="text-gray-700">
-                  📞{" "}
-                  <a href={`tel:${booking.phone}`} className="text-blue-600">
-                    {booking.phone}
-                  </a>
-                </p>
+                {/* View Details Button */}
+                <button
+                  onClick={() => handleViewDetails(booking)}
+                  className="mt-auto bg-[#EE4E34] text-white px-4 py-2 rounded-lg shadow hover:bg-[#d63c25] transition"
+                >
+                  View Details
+                </button>
               </div>
             </div>
           ))}
         </Slider>
       ) : (
-        <p className="text-gray-600">You have no bookings yet.</p>
+        <div className="flex flex-col items-center justify-center h-60 text-gray-500">
+          <FaTimesCircle className="text-6xl mb-4 animate-bounce" />
+          <p className="text-lg font-semibold">No upcoming bookings found</p>
+        </div>
       )}
     </div>
   );
