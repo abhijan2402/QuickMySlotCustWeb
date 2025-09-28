@@ -47,7 +47,7 @@ const MembershipPage = () => {
 
   const { data } = useGetsubscriptionQuery();
 
-  console.log(data);
+  console.log(data?.data);
 
   const [addSubscription] = useAddSubscriptionMutation();
   const [verifySubscription] = useVerifySubscriptionMutation();
@@ -130,17 +130,17 @@ const MembershipPage = () => {
 
       {/* Membership Cards */}
       <div className="grid gap-8 md:grid-cols-2">
-        {plans.map((plan) => (
+        {data?.data?.map((plan) => (
           <div
             key={plan.id}
             className="relative flex flex-col shadow-xl rounded-2xl p-8 border hover:shadow-2xl transition-all bg-white"
           >
             {/* Badge */}
-            {plan.badge && (
               <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#EE4E34] text-white text-xs font-semibold px-4 py-1 rounded-full shadow-md">
-                {plan.badge}
+                {plan.subscription_name === "Professional Plan customer"
+                  ? "Starter Pack"
+                  : "Most Popular"}
               </span>
-            )}
 
             {/* Title */}
             <h3 className="text-2xl font-semibold text-gray-800 mb-1">
