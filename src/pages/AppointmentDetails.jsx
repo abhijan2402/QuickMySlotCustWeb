@@ -9,12 +9,19 @@ import {
 } from "@ant-design/icons";
 import { FaTimesCircle, FaChevronLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
+import {
+  useGetvendorBookingDetailsQuery,
+  useRejectBookingMutation,
+} from "../services/vendorTransactionListApi";
 import SpinnerLodar from "../components/SpinnerLodar";
+import { toast } from "react-toastify";
+import { FaIndianRupeeSign } from "react-icons/fa6";
 
 export default function AppointmentDetails() {
   const { id } = useParams();
-  const { data, isLoading } = useGetvendorBookingQuery();
+  const { data, isLoading } = useGetvendorBookingDetailsQuery(id);
+  const [rejectBooking] = useRejectBookingMutation();
+
   const navigate = useNavigate();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
@@ -26,7 +33,8 @@ export default function AppointmentDetails() {
     );
   }
 
-  const appointment = data?.data?.find((appt) => String(appt.id) === id);
+  const appointment = data?.data;
+  
 
   if (!appointment) {
     return (
@@ -35,7 +43,7 @@ export default function AppointmentDetails() {
         <p className="text-lg font-semibold">No appointment found</p>
         <Button
           className="mt-4 bg-[#EE4E34] text-white"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/appointments")}
         >
           Go Back
         </Button>
@@ -47,6 +55,18 @@ export default function AppointmentDetails() {
   const taxes = Number(appointment.tax || 0);
   const discount = appointment.promo_code_id ? 50 : 0;
   const grandTotal = subtotal + taxes - discount;
+
+
+  const handleReject = async () => {
+    try {
+      await rejectBooking(id).unwrap();
+      toast.success("Appointment cancelled successfully");
+      setCancelModalVisible(false);
+      navigate(-1);
+    } catch (error) {
+      toast.error("Failed to cancelled the appointment");
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
@@ -79,11 +99,11 @@ export default function AppointmentDetails() {
         <p className="text-gray-600 flex items-center gap-2">
           <PhoneOutlined /> {appointment.vendor?.phone_number}
         </p>
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <Button type="primary" className="mt-2 bg-[#EE4E34]">
             Chat
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Customer Details */}
@@ -116,8 +136,8 @@ export default function AppointmentDetails() {
         <div className="bg-white w-full rounded-xl shadow p-4 mb-4 md:mb-0">
           <h4 className="font-semibold mb-2 text-black">Service</h4>
           <div className="flex justify-between text-gray-700 mb-1">
-            <span>{appointment.service?.name}</span>
-            <span>₹{appointment.service?.price}</span>
+            <span>{appointment.service?.name || "NA"}</span>
+            <span>₹{appointment.service?.price || "NA"}</span>
           </div>
         </div>
 
@@ -147,25 +167,27 @@ export default function AppointmentDetails() {
       <div className="bg-white rounded-xl text-black shadow mt-4 p-4 mb-4">
         <h4 className="font-semibold mb-2">Payment Status</h4>
         <p className="text-gray-700 flex items-center gap-2">
-          <DollarOutlined /> {appointment.payment_status || "Pending"}
+          <FaIndianRupeeSign /> {appointment.payment_status || "Pending"}
         </p>
       </div>
 
       {/* Cancel Button */}
-      {/* <Button
-        block
-        size="large"
-        className="bg-red-500 text-white"
-        onClick={() => setCancelModalVisible(true)}
-      >
-        Cancel Appointment
-      </Button> */}
+      {appointment.status === "rejected" ? null : (
+        <Button
+          block
+          size="large"
+          className="bg-red-500 text-white"
+          onClick={() => setCancelModalVisible(true)}
+        >
+          Cancel Appointment
+        </Button>
+      )}
 
       {/* Cancel Modal */}
       <Modal
         title="Confirm Cancellation"
         open={cancelModalVisible}
-        onOk={() => alert("Appointment Cancelled")}
+        onOk={() => handleReject()}
         onCancel={() => setCancelModalVisible(false)}
         okText="Yes, Cancel"
         cancelText="No"

@@ -44,6 +44,18 @@ export const vendorTransactionApi = createApi({
       providesTags: ["vendorBooking"],
     }),
 
+
+    // Get bokking details
+    getvendorBookingDetails: builder.query({
+      query: (id) => {
+        return {
+          url: `customer/booking/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["vendorBooking"],
+    }),
+
     // Accept Booking
     acceptBooking: builder.mutation({
       query: (id) => ({
@@ -82,4 +94,5 @@ export const {
   useRejectBookingMutation,
   useCompletedBookingMutation,
   useGetSlotsQuery,
+  useGetvendorBookingDetailsQuery
 } = vendorTransactionApi;

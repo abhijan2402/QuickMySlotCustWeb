@@ -226,7 +226,7 @@ export default function Appointments() {
   const tabs = [
     { id: "confirmed", icon: <FaChartPie />, label: "Confirmed" },
     { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
-    { id: "rejected", icon: <FaTimesCircle />, label: "Rejected" },
+    { id: "rejected", icon: <FaTimesCircle />, label: "Cancelled" },
     { id: "past", icon: <FaCalendarAlt />, label: "Completed" },
   ];
 

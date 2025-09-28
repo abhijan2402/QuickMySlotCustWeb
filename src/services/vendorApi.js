@@ -37,7 +37,7 @@ export const vendorApi = createApi({
     }),
     // Get Customer Appointments
     getAppointments: builder.query({
-      query: (id) => ({
+      query: () => ({
         url: `customer/bookings/list`,
         method: "GET",
       }),

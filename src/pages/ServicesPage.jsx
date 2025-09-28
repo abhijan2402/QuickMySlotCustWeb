@@ -126,7 +126,7 @@ export default function ServicesPage() {
         {/* Shops Grid */}
         {isLoading ? (
           <CardCarouselLoader count={6} />
-        ) : !data?.data?.length ? (
+        ) : data?.data?.length ===0 ? (
           <NoDataAvailable />
         ) : (
           <>

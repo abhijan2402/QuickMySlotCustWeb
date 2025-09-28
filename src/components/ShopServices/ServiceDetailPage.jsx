@@ -31,12 +31,12 @@ export default function ServiceDetailPage() {
   const { data: category, isLoading: catLoading } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
 
-  const { data, isLoading: shopLoading } = useGetvendorQuery(categoryData?.id);
+  const { data, isLoading: shopLoading } = useGetvendorQuery({id:categoryData?.id});
   const shopData = data?.data?.data?.find((cat) => cat.id === Number(shopId));
 
   const { data: offersData } = useGetvendorPromoCodeQuery(shopData?.id);
 
-  console.log(shopData);
+  console.log(data);
 
   const sliderSettings = {
     dots: true,

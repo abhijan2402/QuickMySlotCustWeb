@@ -54,7 +54,8 @@ export default function BookServicePage() {
   const [removeCartList] = useRemoveCartListMutation();
   const [createOrder] = useCreateOrderMutation();
   const [verifyPayment] = useVerifyPaymentMutation();
-  const { data: cartList, refetch } = useGetCartListQuery();
+  const { data: cartList, refetch, isError } = useGetCartListQuery();
+  console.log(isError);
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.data?.find((cat) => cat.name === type);
   const { data } = useGetvendorQuery(categoryData?.id);
