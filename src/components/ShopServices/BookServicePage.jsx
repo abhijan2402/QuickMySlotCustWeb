@@ -55,7 +55,7 @@ export default function BookServicePage() {
   const [createOrder] = useCreateOrderMutation();
   const [verifyPayment] = useVerifyPaymentMutation();
   const { data: cartList, refetch, isError } = useGetCartListQuery();
-  console.log(isError);
+  console.log(cartList?.data);
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.data?.find((cat) => cat.name === type);
   const { data } = useGetvendorQuery(categoryData?.id);
@@ -99,11 +99,11 @@ export default function BookServicePage() {
 
   const { data: slots } = useGetSlotsQuery(slotId);
   const { data: availableOffers } = useGetvendorPromoCodeQuery(vendorId);
-  console.log("slots", slots);
-  console.log("appliedoffer", appliedOffer);
+  console.log("slots", slots?.data);
+  // console.log("appliedoffer", appliedOffer);
   // console.log("offers", availableOffers?.data);
 
-  console.log(cartItem);
+  // console.log(cartItem);
 
   const handleConfirm = () => {
     const slotFees = selectedSlots?.reduce(
@@ -140,7 +140,7 @@ export default function BookServicePage() {
       status: "pending",
       tax: "5",
       date: selectedDate,
-      slots: selectedSlots.map((slot) => slot.time), // include selected slot times
+      slots: selectedSlots.map((slot) => slot.time), 
       note,
     };
 
@@ -158,7 +158,7 @@ export default function BookServicePage() {
     return `${day}-${month}-${year.slice(2)}`;
   }
 
-  console.log(confirmedBooking);
+  // console.log(confirmedBooking);
 
   const handleConfirmBooking = async (type) => {
     console.log(type);
@@ -425,27 +425,6 @@ export default function BookServicePage() {
           </p>
         </div>
 
-        {/* Date & Time */}
-        {/* <h3 className="font-semibold mb-2">Choose Date & Time</h3>
-        <div className="flex gap-4 mb-4 flex-row sm:flex-row">
-          <DatePicker
-            onChange={(_, dateString) => setSelectedDate(dateString)}
-            placeholder="Select Date"
-            style={{ width: "170px" }}
-          />
-          <Select
-            placeholder="Select Time"
-            style={{ width: "170px" }}
-            onChange={setSelectedTime}
-          >
-            {timeSlots.map((time) => (
-              <Option key={time} value={time}>
-                {time}
-              </Option>
-            ))}
-          </Select>
-        </div> */}
-
         {/* Date & Slot Selection */}
         <h3 className="font-semibold mb-2">Choose Date & Slot</h3>
         <DatePicker
@@ -453,7 +432,7 @@ export default function BookServicePage() {
           placeholder="Select Date"
           style={{ width: "170px" }}
         />
-        <div className="flex mt-4 flex-col sm:flex-row gap-4 mb-4">
+        <div className="flex mt-4 flex-col sm:flex-col gap-4 mb-4">
           <div className="flex-1 min-w-[170px]">
             <div>
               <div className="flex items-center gap-2 font-semibold mt-4 mb-1">
@@ -503,14 +482,20 @@ export default function BookServicePage() {
             </div>
           </div>
 
-          {/* Optional: Show selected slots */}
+          {/* Slected Slots */}
           <div className="flex flex-col gap-2">
             <h4 className="font-semibold text-gray-700">Selected Slots:</h4>
-            {selectedSlots.map((s) => (
-              <span key={s.time} className="text-sm text-gray-600">
-                {s.time} {s.fee ? `(+₹${s.fee})` : ""}
+            {selectedSlots.length === 0 ? (
+              <span className="text-sm text-gray-600 border p-4 rounded-md">
+                No slots selected yet
               </span>
-            ))}
+            ) : (
+              selectedSlots.map((s) => (
+                <span key={s.time} className="text-sm text-gray-600">
+                  {s.time} {s.fee ? `(+₹${s.fee})` : ""}
+                </span>
+              ))
+            )}
           </div>
         </div>
 

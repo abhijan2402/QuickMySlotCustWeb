@@ -28,7 +28,7 @@ export default function ServicesPage() {
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.id === Number(id));
 
-  // console.log(newLoc);
+  console.log(data?.data?.data);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -126,7 +126,7 @@ export default function ServicesPage() {
         {/* Shops Grid */}
         {isLoading ? (
           <CardCarouselLoader count={6} />
-        ) : data?.data?.length ===0 ? (
+        ) : data?.data?.data?.length === 0 ? (
           <NoDataAvailable />
         ) : (
           <>

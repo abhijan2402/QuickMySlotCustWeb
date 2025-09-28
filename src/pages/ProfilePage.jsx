@@ -139,7 +139,9 @@ export default function ProfilePage() {
             <Tooltip title="Wallet Balance">
               <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full shadow-sm">
                 <FaWallet className="text-green-600 text-lg" />
-                <span className="font-semibold text-gray-800">₹{user?.wallet || "00.00"}</span>
+                <span className="font-semibold text-gray-800">
+                  ₹{user?.wallet || "00.00"}
+                </span>
               </div>
             </Tooltip>
 
@@ -190,7 +192,10 @@ export default function ProfilePage() {
               icon={<FaInstagram />}
               style={{ backgroundColor: "#C13584", color: "#fff" }}
               onClick={() =>
-                window.open("https://instagram.com/yourprofile", "_blank")
+                window.open(
+                  "https://www.instagram.com/quickmyslot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr",
+                  "_blank"
+                )
               }
             />
             <Button
@@ -198,28 +203,34 @@ export default function ProfilePage() {
               icon={<FaFacebookF />}
               style={{ backgroundColor: "#1877F2", color: "#fff" }}
               onClick={() =>
-                window.open("https://facebook.com/yourprofile", "_blank")
+                window.open(
+                  "https://www.facebook.com/share/1BAA8a2AjV/?mibextid=wwXIfr",
+                  "_blank"
+                )
               }
             />
-            <Button
-              shape="circle"
-              icon={<FaTwitter />}
-              style={{ backgroundColor: "#1DA1F2", color: "#fff" }}
-              onClick={() =>
-                window.open("https://twitter.com/yourprofile", "_blank")
-              }
-            />
+
             <Button
               shape="circle"
               icon={<FaYoutube />}
               style={{ backgroundColor: "#FF0800", color: "#fff" }}
-              onClick={() => window.open("https://youtube.com/", "_blank")}
+              onClick={() =>
+                window.open(
+                  "https://www.youtube.com/channel/UCVxlXRdkkk0ZSUn1-7vd_6A",
+                  "_blank"
+                )
+              }
             />
             <Button
               shape="circle"
               icon={<FaLinkedin />}
               style={{ backgroundColor: "#007FFF", color: "#fff" }}
-              onClick={() => window.open("https://linkedin.com/", "_blank")}
+              onClick={() =>
+                window.open(
+                  "https://www.linkedin.com/company/quickmyslot/",
+                  "_blank"
+                )
+              }
             />
           </Space>
         </div>
