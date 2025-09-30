@@ -12,9 +12,22 @@ export default function ProfileModal({
   onNext,
   userID,
   tempToken,
+  gEmail,
+  gName,
 }) {
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [form] = Form.useForm();
+
+  console.log(gEmail, gName);
+
+  useEffect(() => {
+    if (gName || gEmail) {
+      form.setFieldsValue({
+        ...(gName ? { name: gName } : {}),
+        ...(gEmail ? { email: gEmail } : {}),
+      });
+    }
+  }, [gName, gEmail, form]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,8 +40,8 @@ export default function ProfileModal({
     fd.append("name", values.name);
     fd.append("email", values.email);
     // fd.append("phone", values.phone);
-    fd.append("address", values.address);
-    fd.append("city", values.city);
+    fd.append("address", values.address || "");
+    fd.append("city", values.city || "");
     fd.append("state", values.state || "");
     fd.append("country", values.country || "");
     fd.append("zip_code", values.zip_code || "");
@@ -49,25 +62,24 @@ export default function ProfileModal({
     onNext();
   };
 
+  const [modalWidth, setModalWidth] = useState("90%");
 
-    const [modalWidth, setModalWidth] = useState("90%");
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setModalWidth("95%"); // mobile
+      } else if (window.innerWidth < 1024) {
+        setModalWidth("70%"); // tablet
+      } else {
+        setModalWidth("50%"); // desktop
+      }
+    };
 
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth < 640) {
-          setModalWidth("95%"); // mobile
-        } else if (window.innerWidth < 1024) {
-          setModalWidth("70%"); // tablet
-        } else {
-          setModalWidth("50%"); // desktop
-        }
-      };
+    handleResize(); // run once
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-      handleResize(); // run once
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-  
   return (
     <Modal
       open={visible}

@@ -41,7 +41,9 @@ export default function ProfilePage() {
 
   // file list for image cropper
   const [fileList, setFileList] = useState([]);
-  const [previewImage, setPreviewImage] = useState(user?.image || null);
+  const [previewImage, setPreviewImage] = useState(
+    user?.url_image || user?.image || null
+  );
 
   const inviteLink = "https://yourapp.com/invite?code=XYZ123";
 
@@ -277,7 +279,7 @@ export default function ProfilePage() {
                 {fileList.length < 1 && (
                   <div>
                     <UploadOutlined />
-                    <div style={{ marginTop: 8 }}>Upload & Crop</div>
+                    <div style={{ marginTop: 8 }}>Upload image & Crop</div>
                   </div>
                 )}
               </Upload>

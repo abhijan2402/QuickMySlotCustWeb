@@ -24,7 +24,7 @@ import LocationModal from "./Modals/LocationModal";
 import { useLocationContext } from "../context/LocationProvider";
 
 export default function Navbar() {
-    const { newLoc, setNewLoc } = useLocationContext();
+  const { newLoc, setNewLoc } = useLocationContext();
   const user = useSelector((state) => state.auth.user);
   const { data: cartList } = useGetCartListQuery();
   const cartCount = cartList?.data?.total_items || 0;
@@ -34,7 +34,6 @@ export default function Navbar() {
   const [city, setCity] = useState(null);
   const [area, setArea] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
- 
 
   const [modalOpen, setModalOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
@@ -54,7 +53,7 @@ export default function Navbar() {
 
       // Otherwise, fallback to geocode from user.address when available
       if (user?.address) {
-        const result = await getCityAndAreaFromAddress(user.address);
+        const result = await getCityAndAreaFromAddress(user?.address);
         if (result) {
           setCity(result.city);
           setArea(result.area);
@@ -219,7 +218,7 @@ export default function Navbar() {
                     {city || "NA"}
                   </span> */}
                   <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
-                    {area || "NA"}, {city || "NA"}
+                    {city || "NA"}, {area || "NA"}
                     <span>
                       <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                     </span>
@@ -248,7 +247,7 @@ export default function Navbar() {
                     {city || "NA"}
                   </span> */}
                     <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
-                      {area || "NA"}, {city || "NA"}
+                      {city || "NA"}, {area || "NA"}
                       <span>
                         <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                       </span>
