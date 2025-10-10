@@ -188,7 +188,7 @@ export default function ServicesPage() {
                     {/* <p className="text-gray-600 text-sm">{shop.address}</p> */}
 
                     <p className="text-gray-500 text-sm mt-1">
-                      Experience: {shop.years_of_experience}
+                      Experience: {shop.years_of_experience}yrs
                     </p>
                     <p className="text-gray-500 text-sm">
                       Available: {shop.daily_end_time} - {shop.daily_start_time}{" "}

@@ -144,7 +144,7 @@ export default function ServiceDetailPage() {
                   {shopData?.daily_start_time}
                 </span>
                 <span>
-                  <b>Experience:</b> {shopData?.years_of_experience}
+                  <b>Experience:</b> {shopData?.years_of_experience}yrs
                 </span>
               </div>
 
