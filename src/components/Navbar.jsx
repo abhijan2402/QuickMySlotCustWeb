@@ -28,49 +28,54 @@ export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
   const { data: cartList } = useGetCartListQuery();
   const cartCount = cartList?.data?.total_items || 0;
-  // console.log(user);
+  console.log(newLoc);
   const navigate = useNavigate();
   const location = useLocation();
   const [city, setCity] = useState(null);
   const [area, setArea] = useState(null);
+  const [fullAddress, setFullAddress] = useState(null);
   const [initialLocation, setInitialLocation] = useState(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
-
+  console.log(city, area);
   useEffect(() => {
     async function fetchCityAndArea() {
       // If lat/lng is present in newLoc, use reverse geocoding accordingly
-      if (newLoc?.lat && newLoc?.lng) {
+      if (newLoc?.latitude && newLoc?.longitude) {
         // Assuming you have a function getAddressFromLatLng that returns { city, area }
-        const result = await getAddressFromLatLng(newLoc.lat, newLoc.lng);
+        const result = await getAddressFromLatLng(
+          newLoc.latitude,
+          newLoc.longitude
+        );
+
+        console.log(result);
         if (result) {
-          setCity(result.city);
-          setArea(result.area);
+          setCity(result?.city);
+          setArea(result?.area);
+          setFullAddress(result?.full_address);
           return;
         }
       }
 
       // Otherwise, fallback to geocode from user.address when available
-      if (user?.address) {
-        const result = await getCityAndAreaFromAddress(user?.address);
-        if (result) {
-          setCity(result.city);
-          setArea(result.area);
-          return;
-        }
-      }
-
-      // Reset if neither are available or failed lookup
-      setCity(null);
-      setArea(null);
+      // if (user?.address) {
+      //   const result = await getCityAndAreaFromAddress(user?.address);
+      //   if (result) {
+      //     setCity(result.city);
+      //     setArea(result.area);
+      //     return;
+      //   }
+      // }
     }
 
     fetchCityAndArea();
-  }, [user?.address, newLoc]);
+  }, [newLoc]);
 
   // Convert user's address to lat/lng on change
-  const addressString = user?.address;
+
+  const addressString = fullAddress;
+  console.log(addressString);
   useEffect(() => {
     async function fetchLatLng() {
       const coord = await getLatLngFromAddress(addressString);
@@ -123,6 +128,18 @@ export default function Navbar() {
     location.pathname === "/privacy-policy" ||
     location.pathname === "/terms-and-conditions";
 
+  const cleanAddress = (address) => {
+    if (!address) return "NA";
+
+    // Remove "Rajasthan", postal code (assumed 6 digits), and "India", along with any trailing commas/spaces
+    return address
+      .replace(/,\s*Rajasthan\s*/i, "")
+      .replace(/\s*\d{6}\s*/, "")
+      .replace(/,\s*India\s*/i, "")
+      .trim()
+      .replace(/,+$/, "");
+  };
+
   // Example wishlist count
   const wishlistCount = 3;
   return (
@@ -137,7 +154,7 @@ export default function Navbar() {
           >
             <img
               src={logo}
-              alt="QuickmySlot Logo"
+              alt="QuickMySlot Logo"
               className="h-16 w-32 rounded object-contain"
             />
           </div>
@@ -218,7 +235,7 @@ export default function Navbar() {
                     {city || "NA"}
                   </span> */}
                   <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
-                    {city || "NA"}, {area || "NA"}
+                    {cleanAddress(fullAddress)}
                     <span>
                       <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                     </span>
@@ -247,7 +264,8 @@ export default function Navbar() {
                     {city || "NA"}
                   </span> */}
                     <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
-                      {city || "NA"}, {area || "NA"}
+                      {cleanAddress(fullAddress)}
+
                       <span>
                         <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                       </span>

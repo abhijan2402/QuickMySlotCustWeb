@@ -195,7 +195,7 @@ export default function ProfilePage() {
               style={{ backgroundColor: "#C13584", color: "#fff" }}
               onClick={() =>
                 window.open(
-                  "https://www.instagram.com/quickmyslot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr",
+                  "https://www.instagram.com/QuickMySlot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr",
                   "_blank"
                 )
               }
@@ -229,7 +229,7 @@ export default function ProfilePage() {
               style={{ backgroundColor: "#007FFF", color: "#fff" }}
               onClick={() =>
                 window.open(
-                  "https://www.linkedin.com/company/quickmyslot/",
+                  "https://www.linkedin.com/company/QuickMySlot/",
                   "_blank"
                 )
               }

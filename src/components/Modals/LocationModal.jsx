@@ -13,6 +13,7 @@ const mapContainerStyle = { width: "100%", height: "400px" };
 
 const LocationModal = ({ open, initialLocation, onOk, onCancel }) => {
   const { newLoc, setNewLoc } = useLocationContext();
+  console.log(newLoc);
   const [markerPos, setMarkerPos] = useState(initialLocation || null);
   const autocompleteRef = useRef(null);
 
@@ -27,7 +28,8 @@ const LocationModal = ({ open, initialLocation, onOk, onCancel }) => {
   }, [initialLocation]);
 
   useEffect(() => {
-    if (markerPos) setNewLoc(markerPos);
+    if (markerPos)
+      setNewLoc({ latitude: markerPos?.lat, longitude: markerPos?.lng });
   }, [markerPos]);
 
   const onPlaceChanged = () => {
@@ -105,6 +107,5 @@ const LocationModal = ({ open, initialLocation, onOk, onCancel }) => {
     </Modal>
   );
 };
-
 
 export default LocationModal;

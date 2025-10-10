@@ -35,7 +35,7 @@ const SocialReach = () => {
       <a href="skype:live:.cid.6b5756bc6ad80f3d?chat" className="skype">
         <FaSkype />
       </a>
-      <a href="mailto:contact@QuickmySlot.com" className="email">
+      <a href="mailto:contact@QuickMySlot.com" className="email">
         <MdEmail />
       </a>
     </div>

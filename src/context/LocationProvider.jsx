@@ -1,21 +1,44 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create context with default value null for newLoc
 const LocationContext = createContext({
   newLoc: null,
   setNewLoc: () => {},
+  address: null,
+  setAddress: () => {},
 });
 
-// Context provider component to wrap your app or part of it
+const DEFAULT_LOCATION = { latitude: 20.5937, longitude: 78.9629 };
+
 export const LocationProvider = ({ children }) => {
   const [newLoc, setNewLoc] = useState(null);
+  const [address, setAddress] = useState(null);
+  console.log(newLoc);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setNewLoc({ latitude, longitude });
+        },
+        (error) => {
+          console.warn("Geolocation permission denied or unavailable", error);
+          setNewLoc(DEFAULT_LOCATION);
+        }
+      );
+    } else {
+      console.warn("Geolocation is not supported by this browser.");
+      setNewLoc(DEFAULT_LOCATION);
+    }
+  }, []);
 
   return (
-    <LocationContext.Provider value={{ newLoc, setNewLoc }}>
+    <LocationContext.Provider
+      value={{ newLoc, setNewLoc, address, setAddress }}
+    >
       {children}
     </LocationContext.Provider>
   );
 };
 
-// Custom hook to use the LocationContext conveniently
 export const useLocationContext = () => useContext(LocationContext);

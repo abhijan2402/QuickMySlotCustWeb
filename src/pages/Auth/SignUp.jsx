@@ -95,7 +95,11 @@ export default function Signup() {
       if (!res?.user?.steps || res?.user?.steps === "") {
         setShowProfileModal(true);
         setTempToken(res?.token);
-      } else if (res?.user?.steps === "2") {
+      } else if (
+        res?.user?.steps === "1" ||
+        res?.user?.steps === "3" ||
+        res?.user?.steps === "2"
+      ) {
         // First, fetch profile with token from OTP response
         const profileResponse = await fetch(`${baseUrl}profile`, {
           headers: { Authorization: `Bearer ${res?.token}` },
@@ -162,6 +166,7 @@ export default function Signup() {
       formData.append("data[email]", firebaseUser.email);
       formData.append("data[name]", firebaseUser.displayName);
       formData.append("data[image]", firebaseUser.photoURL);
+      formData.append("role", "2");
 
       // 2) Get Firebase ID token
       const idToken = await firebaseUser.getIdToken();
@@ -184,7 +189,7 @@ export default function Signup() {
         setUserID(data?.data?.id);
         setGName(data?.data?.name);
         setGEmail(data?.data?.email);
-      } else if (data.data.steps === "2") {
+      } else if (data.data.steps === "2" || data.data.steps === "3") {
         // Fetch profile if steps = 2 and proceed
         const profileResponse = await fetch(`${baseUrl}profile`, {
           headers: { Authorization: `Bearer ${data.token}` },

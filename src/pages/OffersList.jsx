@@ -58,10 +58,10 @@ const OffersList = () => {
                       {step}
                     </span>
                     <span className="text-gray-800 font-semibold text-center max-w-xs">
-                      {i === 0 && "Book your appointment via the QuickmySlot"}
+                      {i === 0 && "Book your appointment via the QuickMySlot"}
                       {i === 1 && "Go and avail the services"}
                       {i === 2 &&
-                        "Pay bill with QuickmySlot to avail the offer"}
+                        "Pay bill with QuickMySlot to avail the offer"}
                     </span>
                   </div>
                 ))}

@@ -136,11 +136,11 @@ const MembershipPage = () => {
             className="relative flex flex-col shadow-xl rounded-2xl p-8 border hover:shadow-2xl transition-all bg-white"
           >
             {/* Badge */}
-              <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#EE4E34] text-white text-xs font-semibold px-4 py-1 rounded-full shadow-md">
-                {plan.subscription_name === "Professional Plan customer"
-                  ? "Starter Pack"
-                  : "Most Popular"}
-              </span>
+            <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#EE4E34] text-white text-xs font-semibold px-4 py-1 rounded-full shadow-md">
+              {plan.subscription_name === "Professional Plan customer"
+                ? "Starter Pack"
+                : "Most Popular"}
+            </span>
 
             {/* Title */}
             <h3 className="text-2xl font-semibold text-gray-800 mb-1">

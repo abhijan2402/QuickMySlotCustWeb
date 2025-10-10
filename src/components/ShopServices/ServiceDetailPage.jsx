@@ -7,7 +7,7 @@ import { MdMap } from "react-icons/md";
 import { BsFillHeartFill, BsPhoneFill } from "react-icons/bs";
 import { BiHeart } from "react-icons/bi";
 import { Tooltip } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RateReviewModal from "../Modals/RateReviewModal";
 import {
   useGetvendorPromoCodeQuery,
@@ -21,22 +21,32 @@ import CardCarouselLoader from "../CardCarouselLoader";
 import SpinnerLodar from "../SpinnerLodar";
 import { div } from "framer-motion/m";
 import { toast } from "react-toastify";
+import { useLocationContext } from "../../context/LocationProvider";
 
 export default function ServiceDetailPage() {
   const { shopId, type } = useParams();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [addToWish] = useAddToWishMutation();
+    const [lat, setLat] = useState("");
+    const [long, setLng] = useState("");
+    const { newLoc, setNewLoc } = useLocationContext();
+    useEffect(() => {
+      if (newLoc) {
+        setLng(newLoc.longitude);
+        setLat(newLoc.latitude);
+      }
+    }, [newLoc]);
 
   const { data: category, isLoading: catLoading } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.name === type);
 
-  const { data, isLoading: shopLoading } = useGetvendorQuery({id:categoryData?.id});
+  const { data, isLoading: shopLoading } = useGetvendorQuery({id:categoryData?.id, lat, long});
   const shopData = data?.data?.data?.find((cat) => cat.id === Number(shopId));
 
   const { data: offersData } = useGetvendorPromoCodeQuery(shopData?.id);
 
-  console.log(data);
+  console.log(data?.data?.data);
 
   const sliderSettings = {
     dots: true,

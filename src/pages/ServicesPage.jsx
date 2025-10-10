@@ -17,18 +17,19 @@ export default function ServicesPage() {
   const { id } = useParams();
   const [lat, setLat] = useState("");
   const [long, setLng] = useState("");
+  const [page, setPage] = useState(null);
   const { newLoc, setNewLoc } = useLocationContext();
   useEffect(() => {
     if (newLoc) {
-      setLng(newLoc.lng);
-      setLat(newLoc.lat);
+      setLng(newLoc.longitude);
+      setLat(newLoc.latitude);
     }
   }, [newLoc]);
-  const { data, isLoading } = useGetvendorQuery({ id, lat, long });
+  const { data, isLoading } = useGetvendorQuery({ id, lat, long, page });
   const { data: category } = useGetcategoryQuery();
   const categoryData = category?.data?.find((cat) => cat.id === Number(id));
 
-  console.log(data?.data?.data);
+  console.log(data);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -141,24 +142,42 @@ export default function ServicesPage() {
                   }
                   className="border rounded-lg shadow-lg overflow-hidden bg-white cursor-pointer hover:shadow-xl transition"
                 >
-                  {/* Image Carousel */}
+                  {/* Image Carousel with Promo Overlay */}
                   <div className="relative">
                     {shop?.portfolio_images?.length > 0 ? (
-                      <Slider {...sliderSettings}>
-                        {shop.portfolio_images.map((img, i) => (
-                          <img
-                            key={i}
-                            src={img?.image_url}
-                            alt={shop.name}
-                            className="w-full h-56 object-cover"
-                          />
-                        ))}
-                      </Slider>
+                      shop.portfolio_images.length > 1 ? (
+                        // ✅ Slider only if more than 1 image
+                        <Slider {...sliderSettings}>
+                          {shop.portfolio_images.map((img, i) => (
+                            <img
+                              key={i}
+                              src={img?.image_url}
+                              alt={shop?.name || "Portfolio image"}
+                              className="w-full h-56 object-cover"
+                            />
+                          ))}
+                        </Slider>
+                      ) : (
+                        // ✅ Single image — show directly
+                        <img
+                          src={shop.portfolio_images[0]?.image_url}
+                          alt={shop?.name || "Portfolio image"}
+                          className="w-full h-56 object-cover"
+                        />
+                      )
                     ) : (
+                      // ✅ No image fallback
                       <div className="w-full h-56 flex items-center justify-center bg-gray-200 text-gray-500 text-sm">
-                        Image not availables
+                        Image not available
                       </div>
                     )}
+
+                    {/* ✅ Promo Section (Overlayed at Bottom) */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-[#EE4E34] bg-opacity-90 flex items-center justify-center">
+                      <p className="text-white font-medium text-center text-sm py-1">
+                        Get 35% OFF Via LUZO
+                      </p>
+                    </div>
                   </div>
 
                   {/* Shop Info */}
@@ -197,7 +216,7 @@ export default function ServicesPage() {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={(page) => setPageNo(page)}
+                onPageChange={(page) => setPage(page)}
               />
             </div>
           </>

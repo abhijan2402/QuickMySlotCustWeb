@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
 
         <div className="space-y-8 text-base sm:text-lg leading-relaxed text-gray-700">
           <p>
-            At <strong>QuickmySlot Technologies</strong>, we are committed to
+            At <strong>QuickMySlot Technologies</strong>, we are committed to
             protecting your privacy and ensuring that your personal information
             is handled in a safe and responsible manner. This Privacy Policy
             explains how we collect, use, disclose, and protect your information
@@ -160,14 +160,14 @@ export default function PrivacyPolicy() {
               personal data, please contact us at:
             </p>
             <p className="mt-2">
-              <strong>QuickmySlot Technologies</strong>
+              <strong>QuickMySlot Technologies</strong>
               <br />
               Email:{" "}
               <a
-                href="mailto:Info@quickmyslot.com"
+                href="mailto:Info@QuickMySlot.com"
                 className="text-blue-600 underline"
               >
-                Info@quickmyslot.com
+                Info@QuickMySlot.com
               </a>
               <br />
               Phone: +91 9810741808

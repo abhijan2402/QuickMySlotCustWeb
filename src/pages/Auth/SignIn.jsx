@@ -186,10 +186,10 @@ export default function Signin() {
             className="mx-auto mb-6 w-40 h-40 object-contain"
           />
           <h2 className="text-2xl font-semibold text-white mb-2">
-            QuickmySlot
+            QuickMySlot
           </h2>
           <p className="text-gray-200 max-w-md">
-            The Ultimate Controller for Your QuickmySlot Application.
+            The Ultimate Controller for Your QuickMySlot Application.
           </p>
         </div>
       </div>

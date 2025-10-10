@@ -11,7 +11,7 @@ export default function TermsAndConditions() {
         <div className="space-y-8 text-base sm:text-lg leading-relaxed text-gray-700">
           <p>
             These Terms & Conditions govern your use of the website and services
-            of <strong>QuickmySlot Technologies</strong>. By accessing or using
+            of <strong>QuickMySlot Technologies</strong>. By accessing or using
             our website, you agree to these Terms. If you do not agree with any
             part of these Terms, please do not use our services.
           </p>
@@ -22,7 +22,7 @@ export default function TermsAndConditions() {
             </h2>
             <p>
               By accessing or using the website and services of{" "}
-              <strong>QuickmySlot Technologies</strong> (“Company”, “we”, “us”
+              <strong>QuickMySlot Technologies</strong> (“Company”, “we”, “us”
               or “our”), you agree to be bound by these Terms & Conditions
               (“Terms”).
             </p>
@@ -148,7 +148,7 @@ export default function TermsAndConditions() {
             </h2>
             <p>
               You agree to indemnify and hold harmless{" "}
-              <strong>QuickmySlot Technologies</strong>
+              <strong>QuickMySlot Technologies</strong>
               from any claims or liabilities arising from your use of the
               Services or violation of these Terms.
             </p>
@@ -203,14 +203,14 @@ export default function TermsAndConditions() {
               13. Contact Information
             </h2>
             <p className="mt-2">
-              <strong>QuickmySlot Technologies</strong>
+              <strong>QuickMySlot Technologies</strong>
               <br />
               Email:{" "}
               <a
-                href="mailto:Info@quickmyslot.com"
+                href="mailto:Info@QuickMySlot.com"
                 className="text-blue-600 underline"
               >
-                Info@quickmyslot.com
+                Info@QuickMySlot.com
               </a>
               <br />
               Phone: +91 9810741808

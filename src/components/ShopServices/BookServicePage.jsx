@@ -140,7 +140,7 @@ export default function BookServicePage() {
       status: "pending",
       tax: "5",
       date: selectedDate,
-      slots: selectedSlots.map((slot) => slot.time), 
+      slots: selectedSlots.map((slot) => slot.time),
       note,
     };
 
@@ -200,7 +200,7 @@ export default function BookServicePage() {
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
           amount: order?.data?.amount,
           currency: "INR",
-          name: "Quickmyslot",
+          name: "QuickMySlot",
           description: "Book your Services",
           order_id: order?.data?.order_id,
           handler: async function (response) {

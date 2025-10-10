@@ -12,12 +12,13 @@ export const vendorApi = createApi({
   endpoints: (builder) => ({
     // Get vendor (GET request)
     getvendor: builder.query({
-      query: ({ id, lat, long }) => {
+      query: ({ id, lat, long, page }) => {
         const params = new URLSearchParams();
 
         if (id) params.append("service_category", id);
         if (lat) params.append("lat", lat);
         if (long) params.append("long", long);
+        if ([page]) params.append("page", page);
 
         return {
           url: `customer/vendor/list/Auth?${params.toString()}`,

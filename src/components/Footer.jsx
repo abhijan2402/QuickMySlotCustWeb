@@ -21,7 +21,7 @@ export default function Footer() {
           <div className="flex items-center gap-2 mb-4">
             {/* <img
               src={logo}
-              alt="QuickmySlot Logo"
+              alt="QuickMySlot Logo"
               className="h-10 w-auto object-contain"
             /> */}
             <h3 className="text-lg font-semibold mb-3">Know Us</h3>
@@ -35,7 +35,7 @@ export default function Footer() {
             <br />
             📞 +91 9810741808
             <br />
-            📧 Info@quickmyslot.com
+            📧 Info@QuickMySlot.com
           </div>
         </div>
 
@@ -97,7 +97,7 @@ export default function Footer() {
               <FaFacebook />
             </a>
             <a
-              href="https://www.instagram.com/quickmyslot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr"
+              href="https://www.instagram.com/QuickMySlot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr"
               className="hover:text-[#FF0800] transition"
               aria-label="Instagram"
               target="_blank"
@@ -106,7 +106,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.linkedin.com/company/quickmyslot/"
+              href="https://www.linkedin.com/company/QuickMySlot/"
               className="hover:text-[#007FFF] transition"
               target="_blank"
               aria-label="LinkedIn"
